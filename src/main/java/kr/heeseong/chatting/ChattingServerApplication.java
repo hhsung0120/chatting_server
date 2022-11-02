@@ -1,4 +1,4 @@
-package kr.heeseong.chatting_server;
+package kr.heeseong.chatting;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

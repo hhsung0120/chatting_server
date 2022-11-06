@@ -56,9 +56,3 @@ logging:
     rollingpolicy:
       max-history: 1
       max-file-size: 100MB
-
-default-upload-path: D:${file.separator}upload${file.separator}
-
---- #dev
-
---- #prod

@@ -15,7 +15,7 @@ public class MainController {
 
     @GetMapping
     public ModelAndView test() {
-        return new ModelAndView("/main/main");
+        return new ModelAndView("/index");
     }
 
 }

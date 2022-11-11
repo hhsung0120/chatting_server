@@ -12,12 +12,12 @@ import java.util.ArrayList;
 @Log4j2
 @RestController
 @RequestMapping("/chattingRoom")
-public class ChattingRoomController {
+public class ChattingRoomControllerOld {
 
     private final ChattingService chattingService;
 
     @Autowired
-    public ChattingRoomController(ChattingService chattingService) {
+    public ChattingRoomControllerOld(ChattingService chattingService) {
         this.chattingService = chattingService;
     }
 

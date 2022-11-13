@@ -6,7 +6,6 @@ var userInfo = {
 var isAdmin = false;
 
 function createChatRoom(){
-	alert(1)
 	var randomNumber = Math.floor((Math.random() * 1000) + 1);
 	var userId = $('#userInfo-userId').val() != '' ?  $('#userInfo-userId').val() : "userId" + randomNumber;
 	var userName = $('#userInfo-userName').val() != '' ? $('#userInfo-userName').val() : randomNumber;
@@ -24,7 +23,7 @@ function createChatRoom(){
 
 	userInfo.userMessageIdx = userIdx;
 	ChatClient.setUserInfo(userIdx, userId, userName, isAdmin);
-	ChatClient.enterChatRoom(programIdx, adminIdx, chatRoomName, description, chatRoomType, function(data) {
+	ChatClient.enterChatRoom(programIdx, adminIdx, chatRoomName, description, chatRoomType,function(data) {
 		ChatClient.getNewEvent(processEvents);
 		drawEnterChatRoom(programIdx, data.name, data.userIdx);
 	});
@@ -123,7 +122,6 @@ var addUserToUserList = function(userIdx, userId, userName) {
 };
 
 var getUserList = function() {
-	alert(1)
 	ChatClient.getUserList(function(data) {
 		$('#user-list').empty();
 		if (data && data.length !== 0) {

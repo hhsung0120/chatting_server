@@ -30,6 +30,10 @@ var ChatClient = function() {
 				name: name,
 				description: description,
 				roomType: type,
+
+				//고정 값
+				password : 1234,
+				categorySeq : 1
 			};
 
 			$.ajax({

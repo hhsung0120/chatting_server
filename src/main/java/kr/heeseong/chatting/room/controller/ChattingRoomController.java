@@ -22,12 +22,12 @@ public class ChattingRoomController {
             , @RequestHeader("isAdmin") boolean isAdmin
             , @RequestBody ChattingRoom chattingRoom) throws Exception {
 
-        System.out.println("gd");
+        System.out.println(userIdx);
+        System.out.println(userId);
+        System.out.println(userName);
+        System.out.println(isAdmin);
+        System.out.println(chattingRoom.toString());
 
-        chattingRoom.setUserIdx(userIdx);
-        chattingRoom.setUserId(userId);
-        chattingRoom.setUserName(userName);
-        chattingRoom.setAdmin(isAdmin);
         return chattingService.enterChattingRoom(chattingRoom);
     }
 }

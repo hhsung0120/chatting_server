@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 public class ChattingUsers {
 
 	private long internalIdx;
@@ -12,6 +11,9 @@ public class ChattingUsers {
 	private String userId;
 	private String userName;
 	private boolean isAdmin;
+
+	public ChattingUsers() {
+	}
 
 	public ChattingUsers(long userIdx, String userId, String userName, boolean isAdmin){
 		this.userIdx = userIdx;

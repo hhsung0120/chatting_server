@@ -27,6 +27,8 @@ var ChatClient = function() {
 			var sendData = {
 				programIdx : programIdx,
 				adminIdx: adminIdx,
+
+				//나에게 필요한 값값
 				name: name,
 				description: description,
 				roomType: type,

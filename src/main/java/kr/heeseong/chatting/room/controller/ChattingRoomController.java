@@ -16,16 +16,8 @@ public class ChattingRoomController {
 
     @PostMapping("/user-enter")
     public ChattingRoom enterChatRoom(
-            @RequestHeader("userIdx") long userIdx
-            , @RequestHeader("userId") String userId
-            , @RequestHeader("userName") String userName
-            , @RequestHeader("isAdmin") boolean isAdmin
-            , @RequestBody ChattingRoom chattingRoom) throws Exception {
+            @RequestBody ChattingRoom chattingRoom) throws Exception {
 
-        System.out.println(userIdx);
-        System.out.println(userId);
-        System.out.println(userName);
-        System.out.println(isAdmin);
         System.out.println(chattingRoom.toString());
 
         return chattingService.enterChattingRoom(chattingRoom);

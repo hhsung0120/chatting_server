@@ -1,10 +1,13 @@
 package kr.heeseong.chatting.room.controller;
 
 import kr.heeseong.chatting.old.model.ChattingRoom;
-import kr.heeseong.chatting.old.service.ChattingService;
+import kr.heeseong.chatting.room.service.ChattingRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Log4j2
 @RestController
@@ -12,14 +15,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/chatting-room")
 public class ChattingRoomController {
 
-    private final ChattingService chattingService;
+    private final ChattingRoomService chattingRoomService;
 
-    @PostMapping("/user-enter")
+    @PostMapping("/enter-user")
     public ChattingRoom enterChatRoom(
             @RequestBody ChattingRoom chattingRoom) throws Exception {
-
-        System.out.println(chattingRoom.toString());
-
-        return chattingService.enterChattingRoom(chattingRoom);
+        log.info("enterChatRoom : {}", chattingRoom);
+        return chattingRoomService.enterChattingRoom(chattingRoom);
     }
 }

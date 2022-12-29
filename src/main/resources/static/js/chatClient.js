@@ -28,7 +28,7 @@ var ChatClient = function() {
 				programIdx : programIdx,
 				adminIdx: adminIdx,
 
-				//나에게 필요한 값값
+				//나에게 필요한 값
 				name: name,
 				description: description,
 				roomType: type,
@@ -41,7 +41,7 @@ var ChatClient = function() {
 			$.ajax({
 				method : "POST",
 				//url : '/chattingRoom/enterUser',
-				url : '/chatting-room/user-enter',
+				url : '/chatting-room/enter-user',
 				contentType : 'application/json; charset=UTF-8',
 				headers : userInfo,
 				data : JSON.stringify(sendData)

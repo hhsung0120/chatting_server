@@ -39,6 +39,12 @@ spring:
         prepStmtCacheSize: 250
         prepStmtCacheSqlLimit: 2048
         useServerPrepStmts: true
+        useLocalSessionState: true
+        rewriteBatchedStatements: true
+        cacheResultSetMetadata: true
+        cacheServerConfiguration: true
+        elideSetAutoCommits: true
+        maintainTimeStats: false
 
 logging:
   level:
@@ -55,4 +61,4 @@ logging:
   logback:
     rollingpolicy:
       max-history: 1
-      max-file-size: 100MB
+      max-file-size: 10MB

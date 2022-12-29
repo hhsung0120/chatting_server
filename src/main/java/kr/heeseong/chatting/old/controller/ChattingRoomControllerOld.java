@@ -2,7 +2,7 @@ package kr.heeseong.chatting.old.controller;
 
 import kr.heeseong.chatting.old.model.ChattingRoom;
 import kr.heeseong.chatting.old.model.ChattingUsers;
-import kr.heeseong.chatting.old.service.ChattingService;
+import kr.heeseong.chatting.old.service.ChattingService_old;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +14,10 @@ import java.util.ArrayList;
 @RequestMapping("/chattingRoom")
 public class ChattingRoomControllerOld {
 
-    private final ChattingService chattingService;
+    private final ChattingService_old chattingService;
 
     @Autowired
-    public ChattingRoomControllerOld(ChattingService chattingService) {
+    public ChattingRoomControllerOld(ChattingService_old chattingService) {
         this.chattingService = chattingService;
     }
 

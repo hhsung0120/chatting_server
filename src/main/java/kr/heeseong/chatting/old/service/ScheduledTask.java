@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class ScheduledTask {
 
-	final private ChattingService chattingService;
+	final private ChattingService_old chattingService;
     @Autowired
-    private ScheduledTask(ChattingService chattingService){
+    private ScheduledTask(ChattingService_old chattingService){
         this.chattingService = chattingService;
     }
 

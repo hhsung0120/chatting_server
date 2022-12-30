@@ -1,5 +1,6 @@
 package kr.heeseong.chatting.old.service;
 
+import kr.heeseong.chatting.room.service.ChattingRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -7,9 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class ScheduledTask {
 
-	final private ChattingService_old chattingService;
+    final private ChattingRoomService chattingService;
+
     @Autowired
-    private ScheduledTask(ChattingService_old chattingService){
+    private ScheduledTask(ChattingRoomService chattingService) {
         this.chattingService = chattingService;
     }
 

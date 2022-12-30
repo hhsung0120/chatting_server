@@ -2,6 +2,7 @@ package kr.heeseong.chatting.old.controller;
 
 import kr.heeseong.chatting.old.model.MessageEvent;
 import kr.heeseong.chatting.old.service.ChattingService_old;
+import kr.heeseong.chatting.room.service.ChattingRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,9 +12,9 @@ import java.util.ArrayList;
 @RequestMapping("/message")
 public class MessageEventController {
 
-	final private ChattingService_old chattingService;
+	final private ChattingRoomService chattingService;
 	@Autowired
-	public MessageEventController(ChattingService_old chattingService){
+	public MessageEventController(ChattingRoomService chattingService){
 		this.chattingService = chattingService;
 	}
 

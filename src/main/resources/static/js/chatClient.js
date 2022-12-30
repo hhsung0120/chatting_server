@@ -40,8 +40,8 @@ var ChatClient = function() {
 
 			$.ajax({
 				method : "POST",
-				//url : '/chattingRoom/enterUser',
-				url : '/chatting-room/enter-user',
+				url : '/chattingRoom/enterUser',
+				//url : '/chatting-room/enter-user',
 				contentType : 'application/json; charset=UTF-8',
 				headers : userInfo,
 				data : JSON.stringify(sendData)

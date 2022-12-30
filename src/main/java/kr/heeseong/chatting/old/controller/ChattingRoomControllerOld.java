@@ -3,6 +3,7 @@ package kr.heeseong.chatting.old.controller;
 import kr.heeseong.chatting.old.model.ChattingRoom;
 import kr.heeseong.chatting.old.model.ChattingUsers;
 import kr.heeseong.chatting.old.service.ChattingService_old;
+import kr.heeseong.chatting.room.service.ChattingRoomService;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,10 +15,10 @@ import java.util.ArrayList;
 @RequestMapping("/chattingRoom")
 public class ChattingRoomControllerOld {
 
-    private final ChattingService_old chattingService;
+    private final ChattingRoomService chattingService;
 
     @Autowired
-    public ChattingRoomControllerOld(ChattingService_old chattingService) {
+    public ChattingRoomControllerOld(ChattingRoomService chattingService) {
         this.chattingService = chattingService;
     }
 
@@ -29,12 +30,15 @@ public class ChattingRoomControllerOld {
             , @RequestHeader("isAdmin") boolean isAdmin
             , @RequestBody ChattingRoom chattingRoom) throws Exception {
 
-        System.out.println("gd");
+        log.info("old parameter1 {}", chattingRoom);
 
         chattingRoom.setUserIdx(userIdx);
         chattingRoom.setUserId(userId);
         chattingRoom.setUserName(userName);
         chattingRoom.setAdmin(isAdmin);
+
+        log.info("old parameter2 {}", chattingRoom);
+
         return chattingService.enterChattingRoom(chattingRoom);
     }
 

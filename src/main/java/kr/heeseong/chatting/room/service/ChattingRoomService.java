@@ -35,15 +35,20 @@ public class ChattingRoomService {
         ChattingUsers chattingUsers = new ChattingUsers(chattingRoom.getUserIdx(), chattingRoom.getUserId(), chattingRoom.getUserName(), chattingRoom.isAdmin());
         ChattingRoom resultChattingRoom = this.enterChattingRoom(chattingRoom, chattingUsers);
 
-
         MessageEvent roomMessageEvent = new MessageEvent(
                 MessageEventType.ENTER_USER.getValue()
                 , resultChattingRoom.getProgramIdx()
                 , chattingUsers.getUserIdx()
                 , chattingUsers.getUserIdx()
                 , chattingUsers.getUserName()
-                , ""
+                , "내가 접속했다."
                 , chattingUsers.getUserId());
+
+        System.out.println("===================");
+        System.out.println(chattingUsers);
+        System.out.println(resultChattingRoom);
+        System.out.println(roomMessageEvent);
+        System.out.println("===================");
 
         chattingMapper.insertEvent(roomMessageEvent);
         return resultChattingRoom;

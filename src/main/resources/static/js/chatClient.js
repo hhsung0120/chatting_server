@@ -29,9 +29,12 @@ var ChatClient = function() {
 				adminIdx: adminIdx,
 
 				//나에게 필요한 값
-				name: name,
-				description: description,
-				roomType: type,
+				name : name,
+				description : description,
+				roomType : type,
+				userId : userInfo.userId,
+				userIdx : userInfo.userIdx,
+				userName : userInfo.userName,
 
 				//고정 값
 				password : 1234,
@@ -40,8 +43,8 @@ var ChatClient = function() {
 
 			$.ajax({
 				method : "POST",
-				url : '/chattingRoom/enterUser',
-				//url : '/chatting-room/enter-user',
+				//url : '/chattingRoom/enterUser',
+				url : '/chatting-room/enter-user',
 				contentType : 'application/json; charset=UTF-8',
 				headers : userInfo,
 				data : JSON.stringify(sendData)

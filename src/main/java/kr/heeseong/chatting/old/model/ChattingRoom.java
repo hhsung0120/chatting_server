@@ -18,7 +18,7 @@ public class ChattingRoom extends ChattingUsers {
     private long adminIdx;
     private String status;
 
-    //신규
+    //리팩토링 영역
     private int categorySeq;
     private String roomTitle;
     private String password;
@@ -26,17 +26,7 @@ public class ChattingRoom extends ChattingUsers {
     private String simultaneousConnectionsUseYn;
     private String useYn;
 
-    public ChattingRoom() {
-    }
-
-    public ChattingRoom(String name, String description, String password, String status, int type, long userIdx, long adminIdx, int programIdx) {
-        this.name = name;
-        this.description = description;
-        this.password = password;
-        this.status = status;
-        this.roomType = type;
-        this.adminIdx = adminIdx;
-        this.programIdx = programIdx;
-        this.setUserIdx(userIdx);
+    public ChattingUsers getChattingUsers(){
+        return new ChattingUsers(super.getUserIdx(), super.getUserId(), super.getUserName(), super.isAdmin());
     }
 }

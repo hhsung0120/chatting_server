@@ -18,11 +18,21 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class ChattingRoomService {
 
+    //채팅 방
     private ConcurrentHashMap<Integer, ChattingRoomData> chattingRooms = new ConcurrentHashMap<>();
+
+    //채팅 유저
     private ConcurrentHashMap<Long, ChattingUserData> chattingUsers = new ConcurrentHashMap<>();
+
+    //채팅방 락
     private Object chattingRoomLock = new Object();
+
+    //채팅 유저 락
     private Object chattingUserLock = new Object();
+
+    //채팅 방 인덱스
     private Long internalIndex = 0L;
+    private Long chattingRoomSeq = 1L;
 
     private final ChattingMapper chattingMapper;
 
@@ -131,9 +141,12 @@ public class ChattingRoomService {
     }
 
     private ChattingRoom enterChattingRoom(ChattingRoom chattingRoom, ChattingUsers chattingUsers) throws Exception {
-        if (chattingUsers.getInternalIdx() != -1) {
-            throw new BadArgumentException();
-        }
+
+        //최초 넘어 온 값이 방 인덱스 값을 -1로 설정
+        //아무 의미 없음
+//        if (chattingUsers.getInternalIdx() != -1) {
+//            throw new BadArgumentException();
+//        }
 
         ChattingUserData chattingUserData = setChattingUser(chattingUsers);
         ChattingRoomData chattingRoomData = chattingRooms.get(chattingRoom.getProgramIdx());

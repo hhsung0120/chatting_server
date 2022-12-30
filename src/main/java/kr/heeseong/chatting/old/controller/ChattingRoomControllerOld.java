@@ -38,6 +38,9 @@ public class ChattingRoomControllerOld {
         chattingRoom.setAdmin(isAdmin);
 
         log.info("old parameter2 {}", chattingRoom);
+        log.info("old parameter2 {}", chattingRoom.getUserId());
+        log.info("old parameter2 {}", chattingRoom.getUserIdx());
+        log.info("old parameter2 {}", chattingRoom.getUserName());
 
         return chattingService.enterChattingRoom(chattingRoom);
     }

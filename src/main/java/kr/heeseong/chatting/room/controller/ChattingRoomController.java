@@ -21,9 +21,6 @@ public class ChattingRoomController {
     public ChattingRoom enterChatRoom(
             @RequestBody ChattingRoom chattingRoom) throws Exception {
 
-        //old parameter
-        // ChattingRoom(internalIdx=0, programIdx=1, name=1, description=Description, roomType=0, adminIdx=426, status=null, categorySeq=1, roomTitle=null, password=1234, secretModeUseYn=null, simultaneousConnectionsUseYn=null, useYn=null)
-        // ChattingRoom(internalIdx=0, programIdx=1, name=1, description=Description, roomType=0, adminIdx=37, status=null, categorySeq=1, roomTitle=null, password=1234, secretModeUseYn=null, simultaneousConnectionsUseYn=null, useYn=null)
         log.info("enterChatRoom : {}", chattingRoom);
         return chattingRoomService.enterChattingRoom(chattingRoom);
     }

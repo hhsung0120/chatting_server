@@ -5,6 +5,7 @@ import kr.heeseong.chatting.old.event_enum.MessageEventType;
 import kr.heeseong.chatting.old.exceptions.*;
 import kr.heeseong.chatting.old.mapper.ChattingMapper;
 import kr.heeseong.chatting.old.model.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-
+@Slf4j
 @Service
 public class ChattingRoomService {
 
@@ -31,7 +32,6 @@ public class ChattingRoomService {
     private Object chattingUserLock = new Object();
 
     //채팅 방 인덱스
-    private Long internalIndex = 0L;
     private Long chattingRoomSeq = 1L;
 
     private final ChattingMapper chattingMapper;
@@ -42,17 +42,18 @@ public class ChattingRoomService {
     }
 
     public ChattingRoom enterChattingRoom(ChattingRoom chattingRoom) throws Exception {
-        ChattingUsers chattingUsers = new ChattingUsers(chattingRoom.getUserIdx(), chattingRoom.getUserId(), chattingRoom.getUserName(), chattingRoom.isAdmin());
-        ChattingRoom resultChattingRoom = this.enterChattingRoom(chattingRoom, chattingUsers);
+
+        //ChattingUsers chattingUsers = new ChattingUsers(chattingRoom.getUserIdx(), chattingRoom.getUserId(), chattingRoom.getUserName(), chattingRoom.isAdmin());
+        ChattingRoom resultChattingRoom = this.enterChattingRoom(chattingRoom, chattingRoom.getChattingUser());
 
         MessageEvent roomMessageEvent = new MessageEvent(
                 MessageEventType.ENTER_USER.getValue()
                 , resultChattingRoom.getProgramIdx()
-                , chattingUsers.getUserIdx()
-                , chattingUsers.getUserIdx()
-                , chattingUsers.getUserName()
+                , chattingRoom.getChattingUser().getUserIdx()
+                , chattingRoom.getChattingUser().getUserIdx()
+                , chattingRoom.getChattingUser().getUserName()
                 , "내가 접속했다."
-                , chattingUsers.getUserId());
+                , chattingRoom.getChattingUser().getUserId());
 
         System.out.println("===================");
         System.out.println(chattingUsers);
@@ -162,7 +163,7 @@ public class ChattingRoomService {
 
         MessageEvent messageEvent = EventManager.makeEnterRoomEvent(chattingRoom.getProgramIdx(), chattingUsers);
         sendMessageEvent(chattingUserData.getInternalIdx(), messageEvent);
-        chattingMapper.insertEvent(messageEvent);
+        //chattingMapper.insertEvent(messageEvent);
 
         chattingRoom.setInternalIdx(chattingUserData.getInternalIdx());
         return chattingRoom;
@@ -275,17 +276,17 @@ public class ChattingRoomService {
     }
 
     public ChattingUserData setChattingUser(ChattingUsers chattingUsers) {
-        internalIndex++;
-        chattingUsers.setInternalIdx(internalIndex);
+        chattingUsers.setInternalIdx(chattingRoomSeq);
 
         //자주 사용 되는 객체 이기 때문에 약한 참조 처리
         WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUsers));
         ChattingUserData chattingUserData = userRef.get();
 
         synchronized (chattingUserLock) {
-            this.chattingUsers.put(internalIndex, chattingUserData);
+            this.chattingUsers.put(chattingRoomSeq, chattingUserData);
         }
 
+        chattingRoomSeq = chattingRoomSeq + 1;
         return chattingUserData;
     }
 
@@ -356,7 +357,8 @@ public class ChattingRoomService {
 
     private void checkAdmin(long internalIdx) throws Exception {
         ChattingUserData user = chattingUsers.get(internalIdx);
-        if (user == null || user.isAdmin() != true) {
+        log.info("checkAdmin {}", user);
+        if (user == null || !user.isAdmin()) {
             throw new UnauthorizedException();
         }
     }

@@ -26,7 +26,8 @@ public class ChattingRoom extends ChattingUsers {
     private String simultaneousConnectionsUseYn;
     private String useYn;
 
-    public ChattingUsers getChattingUsers(){
-        return new ChattingUsers(super.getUserIdx(), super.getUserId(), super.getUserName(), super.isAdmin());
+    public ChattingUsers getChattingUser(){
+        Boolean isAdmin = "admin".equals(super.getUserId());
+        return new ChattingUsers(super.getUserIdx(), super.getUserId(), super.getUserName(), isAdmin);
     }
 }

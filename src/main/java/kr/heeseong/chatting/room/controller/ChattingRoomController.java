@@ -22,6 +22,7 @@ public class ChattingRoomController {
             @RequestBody ChattingRoom chattingRoom) throws Exception {
 
         log.info("enterChatRoom : {}", chattingRoom);
+        log.info("enterChatRoomUser : {}", chattingRoom.getChattingUser());
         return chattingRoomService.enterChattingRoom(chattingRoom);
     }
 }

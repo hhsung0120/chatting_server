@@ -101,8 +101,9 @@ public class ChattingRoomData {
 	@JsonIgnore
 	public Set<Long> getInternalUsers() {
 		if (users == null) {
-			users = new ConcurrentHashMap<Long, ChattingUsers>();
+			users = new ConcurrentHashMap<>();
 		}
+
 		return users.keySet();
 	}
 	

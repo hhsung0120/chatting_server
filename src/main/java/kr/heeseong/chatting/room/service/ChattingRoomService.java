@@ -5,8 +5,9 @@ import kr.heeseong.chatting.old.event_enum.MessageEventType;
 import kr.heeseong.chatting.old.exceptions.*;
 import kr.heeseong.chatting.old.mapper.ChattingMapper;
 import kr.heeseong.chatting.old.model.*;
+import kr.heeseong.chatting.user.service.ChattingUserService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.ref.WeakReference;
@@ -17,52 +18,41 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class ChattingRoomService {
 
     //채팅 방
     private ConcurrentHashMap<Integer, ChattingRoomData> chattingRooms = new ConcurrentHashMap<>();
-
     //채팅 유저
     private ConcurrentHashMap<Long, ChattingUserData> chattingUsers = new ConcurrentHashMap<>();
-
-    //채팅방 락
-    private Object chattingRoomLock = new Object();
-
-    //채팅 유저 락
-    private Object chattingUserLock = new Object();
-
     //채팅 방 인덱스
     private Long chattingRoomSeq = 1L;
-
     private final ChattingMapper chattingMapper;
+    private final ChattingUserService chattingUserService;
 
-    @Autowired
-    private ChattingRoomService(ChattingMapper chattingMapper) {
-        this.chattingMapper = chattingMapper;
-    }
+
 
     public ChattingRoom enterChattingRoom(ChattingRoom chattingRoom) throws Exception {
 
         //ChattingUsers chattingUsers = new ChattingUsers(chattingRoom.getUserIdx(), chattingRoom.getUserId(), chattingRoom.getUserName(), chattingRoom.isAdmin());
-        ChattingRoom resultChattingRoom = this.enterChattingRoom(chattingRoom, chattingRoom.getChattingUser());
 
-        MessageEvent roomMessageEvent = new MessageEvent(
-                MessageEventType.ENTER_USER.getValue()
-                , resultChattingRoom.getProgramIdx()
-                , chattingRoom.getChattingUser().getUserIdx()
-                , chattingRoom.getChattingUser().getUserIdx()
-                , chattingRoom.getChattingUser().getUserName()
-                , "내가 접속했다."
-                , chattingRoom.getChattingUser().getUserId());
-
-        System.out.println("===================");
-        System.out.println(chattingUsers);
-        System.out.println(resultChattingRoom);
-        System.out.println(roomMessageEvent);
-        System.out.println("===================");
-
-        chattingMapper.insertEvent(roomMessageEvent);
-        return resultChattingRoom;
+//        MessageEvent roomMessageEvent = new MessageEvent(
+//                MessageEventType.ENTER_USER.getValue()
+//                , resultChattingRoom.getProgramIdx()
+//                , chattingRoom.getChattingUser().getUserIdx()
+//                , chattingRoom.getChattingUser().getUserIdx()
+//                , chattingRoom.getChattingUser().getUserName()
+//                , "내가 접속했다."
+//                , chattingRoom.getChattingUser().getUserId());
+//
+//        System.out.println("===================");
+//        System.out.println(chattingUsers);
+//        System.out.println(resultChattingRoom);
+//        System.out.println(roomMessageEvent);
+//        System.out.println("===================");
+//
+//        chattingMapper.insertEvent(roomMessageEvent);
+        return this.createChattingRoomAndChattingUser(chattingRoom);
     }
 
 
@@ -141,27 +131,22 @@ public class ChattingRoomService {
         return user.getEvents();
     }
 
-    private ChattingRoom enterChattingRoom(ChattingRoom chattingRoom, ChattingUsers chattingUsers) throws Exception {
+    private ChattingRoom createChattingRoomAndChattingUser(ChattingRoom chattingRoom) throws Exception {
 
-        //최초 넘어 온 값이 방 인덱스 값을 -1로 설정
-        //아무 의미 없음
-//        if (chattingUsers.getInternalIdx() != -1) {
-//            throw new BadArgumentException();
-//        }
-
-        ChattingUserData chattingUserData = setChattingUser(chattingUsers);
         ChattingRoomData chattingRoomData = chattingRooms.get(chattingRoom.getProgramIdx());
         if (chattingRoomData == null) {
-            chattingRoomData = createChattingRoom(chattingRoom, true);
+            chattingRoomData = createChattingRoom(chattingRoom);
         }
 
-        if (chattingRoomData.addUser(chattingUserData.getChattingUsers()) == -1) {
+        ChattingUserData chattingUserData = setChattingUser(chattingRoom.getChattingUser());
+
+        if (chattingUserService.addUser(chattingUserData.getChattingUsers()) == -1) {
             throw new UserExistException();
         }
 
         chattingUserData.setProgramIdx(chattingRoom.getProgramIdx());
 
-        MessageEvent messageEvent = EventManager.makeEnterRoomEvent(chattingRoom.getProgramIdx(), chattingUsers);
+        MessageEvent messageEvent = EventManager.makeEnterRoomEvent(chattingRoom.getProgramIdx(), chattingRoom.getChattingUser());
         sendMessageEvent(chattingUserData.getInternalIdx(), messageEvent);
         //chattingMapper.insertEvent(messageEvent);
 
@@ -282,15 +267,13 @@ public class ChattingRoomService {
         WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUsers));
         ChattingUserData chattingUserData = userRef.get();
 
-        synchronized (chattingUserLock) {
-            this.chattingUsers.put(chattingRoomSeq, chattingUserData);
-        }
-
+        this.chattingUsers.put(chattingRoomSeq, chattingUserData);
         chattingRoomSeq = chattingRoomSeq + 1;
+
         return chattingUserData;
     }
 
-    public int removeUser(long internalIdx, Iterator<Map.Entry<Long, ChattingUserData>> userIteration) throws Exception {
+    public int removeUser(long internalIdx, Iterator<Map.Entry<Long, ChattingUserData>> userIteration) {
         ChattingUserData user = chattingUsers.get(internalIdx);
         if (user == null) {
             return -1;
@@ -298,13 +281,10 @@ public class ChattingRoomService {
 
         user.removeAll();
 
-        synchronized (chattingUserLock) {
-            if (userIteration != null) {
-                userIteration.remove();
-            } else {
-                chattingUsers.remove(internalIdx);
-            }
-            user = null;
+        if (userIteration != null) {
+            userIteration.remove();
+        } else {
+            chattingUsers.remove(internalIdx);
         }
 
         return 0;
@@ -345,10 +325,7 @@ public class ChattingRoomService {
             throw new ChatRoomNotExistException();
         }
 
-        synchronized (chattingRoomLock) {
-            chattingRooms.remove(roomIdx);
-            chatRoomManager = null;
-        }
+        chattingRooms.remove(roomIdx);
 
         MessageEvent messageEvent = EventManager.removeChatRoomEvent(roomIdx);
         sendEvent(internalIdx, messageEvent);
@@ -363,25 +340,24 @@ public class ChattingRoomService {
         }
     }
 
-    private ChattingRoomData createChattingRoom(ChattingRoom chattingRoom, boolean log) throws Exception {
+    private ChattingRoomData createChattingRoom(ChattingRoom chattingRoom) throws Exception {
         ChattingRoomData chattingRoomData;
 
-        synchronized (chattingRoomLock) {
-            if (chattingRooms.get(chattingRoom.getProgramIdx()) != null) {
-                throw new ChatRoomExistException();
-            }
-
-            WeakReference<ChattingRoomData> chatRoomRef = new WeakReference<ChattingRoomData>(new ChattingRoomData());
-            chattingRoomData = chatRoomRef.get();
-            chattingRoomData.setChattingRoom(chattingRoom);
-            chattingRooms.put(chattingRoomData.getProgramIdx(), chattingRoomData);
+        if (chattingRooms.get(chattingRoom.getProgramIdx()) != null) {
+            log.error("chatting room exist exception / chattingRoomSeq : {}", chattingRoom.getProgramIdx());
+            throw new ChatRoomExistException();
         }
 
-        if (log) {
-            MessageEvent messageEvent = EventManager.makeCreateRoomEvent(chattingRoom);
-            //sendEvent(internalIdx, event);
-            chattingMapper.insertEvent(messageEvent);
-        }
+        WeakReference<ChattingRoomData> chatRoomRef = new WeakReference<>(new ChattingRoomData());
+        chattingRoomData = chatRoomRef.get();
+        chattingRoomData.setChattingRoom(chattingRoom);
+        chattingRooms.put(chattingRoomData.getProgramIdx(), chattingRoomData);
+
+//        if (log) {
+//            MessageEvent messageEvent = EventManager.makeCreateRoomEvent(chattingRoom);
+//            //sendEvent(internalIdx, event);
+//            chattingMapper.insertEvent(messageEvent);
+//        }
 
         return chattingRoomData;
     }

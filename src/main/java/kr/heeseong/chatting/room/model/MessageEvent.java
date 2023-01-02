@@ -1,4 +1,4 @@
-package kr.heeseong.chatting.old.model;
+package kr.heeseong.chatting.room.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

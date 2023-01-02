@@ -1,18 +1,15 @@
-package kr.heeseong.chatting.user.service;
+package kr.heeseong.chatting.old.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import kr.heeseong.chatting.old.model.ChattingRoomOld;
-import kr.heeseong.chatting.old.model.ChattingUsersOld;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import kr.heeseong.chatting.room.model.ChattingRoom;
+import lombok.Data;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Slf4j
-@Service
-public class ChattingUserService {
+@Data
+public class ChattingRoomDataOld {
 
     private ChattingRoomOld chattingRoom;
     private ConcurrentHashMap<Long, ChattingUsersOld> users;
@@ -105,7 +102,7 @@ public class ChattingUserService {
     @JsonIgnore
     public Set<Long> getInternalUsers() {
         if (users == null) {
-            users = new ConcurrentHashMap<Long, ChattingUsersOld>();
+            users = new ConcurrentHashMap<>();
         }
 
         return users.keySet();

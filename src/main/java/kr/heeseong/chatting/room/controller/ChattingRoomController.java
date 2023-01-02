@@ -1,6 +1,7 @@
 package kr.heeseong.chatting.room.controller;
 
-import kr.heeseong.chatting.old.model.ChattingRoom;
+import kr.heeseong.chatting.old.model.ChattingRoomOld;
+import kr.heeseong.chatting.room.model.ChattingRoom;
 import kr.heeseong.chatting.room.service.ChattingRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,10 +20,10 @@ public class ChattingRoomController {
 
     @PostMapping("/enter-user")
     public ChattingRoom enterChatRoom(
-            @RequestBody ChattingRoom chattingRoom) throws Exception {
+            @RequestBody ChattingRoom ChattingRoom) throws Exception {
 
-        log.info("enterChatRoom : {}", chattingRoom);
-        log.info("enterChatRoomUser : {}", chattingRoom.getChattingUser());
-        return chattingRoomService.enterChattingRoom(chattingRoom);
+        log.info("enterChatRoom : {}", ChattingRoom);
+        log.info("enterChatRoomUser : {}", ChattingRoom.getChattingUser());
+        return chattingRoomService.enterChattingRoom(ChattingRoom);
     }
 }

@@ -1,9 +1,10 @@
 package kr.heeseong.chatting.old.controller;
 
-import kr.heeseong.chatting.old.model.ChattingRoom;
-import kr.heeseong.chatting.old.model.ChattingUsers;
-import kr.heeseong.chatting.old.service.ChattingService_old;
+import kr.heeseong.chatting.old.model.ChattingRoomOld;
+import kr.heeseong.chatting.old.model.ChattingUsersOld;
+import kr.heeseong.chatting.room.model.ChattingRoom;
 import kr.heeseong.chatting.room.service.ChattingRoomService;
+import kr.heeseong.chatting.user.model.ChattingUser;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -46,7 +47,7 @@ public class ChattingRoomControllerOld {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public ArrayList<ChattingUsers> listUsers(
+    public ArrayList<ChattingUser> listUsers(
             @RequestParam("programIdx") int programIdx) {
         return chattingService.listUsers(programIdx);
     }
@@ -71,7 +72,7 @@ public class ChattingRoomControllerOld {
             @RequestHeader("internalIdx") long internalIdx,
             @RequestHeader("programIdx") int programIdx,
             @RequestHeader("userIdx") int userIdx,
-            @RequestBody ChattingUsers blackUser) throws Exception {
+            @RequestBody ChattingUsersOld blackUser) throws Exception {
         chattingService.addBlackList(internalIdx, userIdx, programIdx, blackUser.getUserIdx());
     }
 
@@ -80,7 +81,7 @@ public class ChattingRoomControllerOld {
             @RequestHeader("internalIdx") long internalIdx,
             @RequestHeader("programIdx") int programIdx,
             @RequestHeader("userIdx") int userIdx,
-            @RequestBody ChattingUsers blackUser) throws Exception {
+            @RequestBody ChattingUsersOld blackUser) throws Exception {
         chattingService.removeBlackList(internalIdx, userIdx, programIdx, blackUser.getUserIdx());
     }
 

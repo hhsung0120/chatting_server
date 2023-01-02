@@ -8,45 +8,45 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 @Data
-public class ChattingUserData {
+public class ChattingUserDataOld {
 
-	private ChattingUsers chattingUsers;
+	private ChattingUsersOld chattingUsersOld;
 	private int programIdx;
-	private ArrayBlockingQueue<MessageEvent> messageQueue;
+	private ArrayBlockingQueue<MessageEventOld> messageQueue;
 	private long latestMessageTime;
 	private long DEFAULT_MESSAGE_TIMEOUT = 60 * 1000 * 2; // 2 minutes
 	private long userTimeout = DEFAULT_MESSAGE_TIMEOUT;
 
-	public ChattingUserData(ChattingUsers chattingUsers) {
-		this.chattingUsers = chattingUsers;
+	public ChattingUserDataOld(ChattingUsersOld chattingUsersOld) {
+		this.chattingUsersOld = chattingUsersOld;
 		messageQueue = new ArrayBlockingQueue<>(10);
 		latestMessageTime = System.currentTimeMillis();
 	}
 
 	public long getUserIdx() {
-		return chattingUsers.getUserIdx();
+		return chattingUsersOld.getUserIdx();
 	}
 
 	public long getInternalIdx() {
-		return chattingUsers.getInternalIdx();
+		return chattingUsersOld.getInternalIdx();
 	}
 
 	public String getUserId() {
-		return chattingUsers.getUserId();
+		return chattingUsersOld.getUserId();
 	}
 
 	public String getUserName() {
-		return chattingUsers.getUserName();
+		return chattingUsersOld.getUserName();
 	}
 
 	public boolean isAdmin() {
-		return chattingUsers.isAdmin();
+		return chattingUsersOld.isAdmin();
 	}
 
-	public void postMessage(MessageEvent messageEvent) {
+	public void postMessage(MessageEventOld messageEventOld) {
 		if (messageQueue != null) {
 			try {
-				messageQueue.add(messageEvent);
+				messageQueue.add(messageEventOld);
 			} catch (Exception e) {
 				decreaseUserTimeOut();
 				e.printStackTrace();
@@ -75,17 +75,17 @@ public class ChattingUserData {
 	}
 	
 	@JsonIgnore
-	public ArrayList<MessageEvent> getEvents() {
+	public ArrayList<MessageEventOld> getEvents() {
 		setLatestTime();
-		ArrayList<MessageEvent> messageEvents = new ArrayList<>();
+		ArrayList<MessageEventOld> messageEventOlds = new ArrayList<>();
 		if (messageQueue != null) {
 			try {
-				MessageEvent messageEvent = messageQueue.poll(5000, TimeUnit.MILLISECONDS);
-				if (messageEvent != null && messageQueue != null) {
-					messageEvents.add(messageEvent);
+				MessageEventOld messageEventOld = messageQueue.poll(5000, TimeUnit.MILLISECONDS);
+				if (messageEventOld != null && messageQueue != null) {
+					messageEventOlds.add(messageEventOld);
 					if (messageQueue.size() != 0) {
 						for (int i = 0; i < messageQueue.size(); i++) {
-							messageEvents.add(messageQueue.take());
+							messageEventOlds.add(messageQueue.take());
 						}
 					}
 				}
@@ -94,7 +94,7 @@ public class ChattingUserData {
 			}
 		}
 
-		return messageEvents;
+		return messageEventOlds;
 	}
 	
 	public void removeAll() {

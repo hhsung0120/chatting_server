@@ -1,6 +1,6 @@
 package kr.heeseong.chatting.old.mapper;
 
-import kr.heeseong.chatting.old.model.MessageEvent;
+import kr.heeseong.chatting.old.model.MessageEventOld;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Options;
@@ -11,7 +11,7 @@ public interface ChattingMapper {
 	@Insert("insert into chatting(message_evenType, programIdx, to_userIdx, from_userIdx, message) " +
 			"values (#{messageEventType}, #{programIdx}, #{toUserIdx}, #{fromUserIdx}, #{message})")
 	@Options(useGeneratedKeys=true, keyProperty="idx")//고유값을 받기위해 id > idx 수정 16.10.17
-	public long insertEvent(MessageEvent chatDTO) throws Exception;
+	public long insertEvent(MessageEventOld chatDTO) throws Exception;
 
 	/*@Select("select * from chatting where type in (0,1) and programIdx = #{roomName} order by regidate asc")
 	public List<Event> getBeforeAdminMessage(String roomName);

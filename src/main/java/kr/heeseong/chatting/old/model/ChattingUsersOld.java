@@ -3,7 +3,7 @@ package kr.heeseong.chatting.old.model;
 import lombok.Data;
 
 @Data
-public class ChattingUsers {
+public class ChattingUsersOld {
 
     private long internalIdx;
     private long userIdx;
@@ -11,10 +11,10 @@ public class ChattingUsers {
     private String userName;
     private boolean isAdmin;
 
-    public ChattingUsers() {
+    public ChattingUsersOld() {
     }
 
-    public ChattingUsers(long userIdx, String userId, String userName, boolean isAdmin) {
+    public ChattingUsersOld(long userIdx, String userId, String userName, boolean isAdmin) {
         this.userIdx = userIdx;
         this.userId = userId;
         this.userName = userName;

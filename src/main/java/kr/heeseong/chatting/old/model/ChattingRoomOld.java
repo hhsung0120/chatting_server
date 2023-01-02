@@ -6,7 +6,7 @@ import lombok.ToString;
 
 @Getter
 @ToString
-public class ChattingRoom extends ChattingUsers {
+public class ChattingRoomOld extends ChattingUsersOld {
 
     //올드 영역
     @Setter
@@ -26,8 +26,8 @@ public class ChattingRoom extends ChattingUsers {
     private String simultaneousConnectionsUseYn;
     private String useYn;
 
-    public ChattingUsers getChattingUser(){
+    public ChattingUsersOld getChattingUser(){
         Boolean isAdmin = "admin".equals(super.getUserId());
-        return new ChattingUsers(super.getUserIdx(), super.getUserId(), super.getUserName(), isAdmin);
+        return new ChattingUsersOld(super.getUserIdx(), super.getUserId(), super.getUserName(), isAdmin);
     }
 }

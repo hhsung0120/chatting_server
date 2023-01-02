@@ -1,6 +1,7 @@
-package kr.heeseong.chatting.old.model;
+package kr.heeseong.chatting.room.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import kr.heeseong.chatting.user.model.ChattingUser;
 import lombok.Data;
 
 import java.util.HashSet;
@@ -11,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChattingRoomData {
 
 	private ChattingRoom chattingRoom;
-	private ConcurrentHashMap<Long, ChattingUsers> users;
+	private ConcurrentHashMap<Long, ChattingUser> users;
 	private Object userLock = new Object();
 	private Object blackLock = new Object();
 	private HashSet<Long> blackList = new HashSet<Long>();
@@ -81,9 +82,9 @@ public class ChattingRoomData {
 	}
 	
 	@JsonIgnore
-	public ConcurrentHashMap<Long, ChattingUsers> getUserList() {
+	public ConcurrentHashMap<Long, ChattingUser> getUserList() {
 		if (users == null) {
-			users = new ConcurrentHashMap<Long, ChattingUsers>();
+			users = new ConcurrentHashMap<Long, ChattingUser>();
 		}
 		return users;
 	}
@@ -92,7 +93,7 @@ public class ChattingRoomData {
 		Set<Long> userIdxs = new HashSet<Long>();
 		
 		for (Long keyIndex : getInternalUsers()) {
-			ChattingUsers user = users.get(keyIndex);
+			ChattingUser user = users.get(keyIndex);
 			userIdxs.add(user.getUserIdx());
 		}
 		return userIdxs;
@@ -107,7 +108,7 @@ public class ChattingRoomData {
 		return users.keySet();
 	}
 	
-	public int addUser(ChattingUsers user) {
+	public int addUser(ChattingUser user) {
 		if (getInternalUsers().contains(user.getInternalIdx()) == true) {
 			return -1;
 		}

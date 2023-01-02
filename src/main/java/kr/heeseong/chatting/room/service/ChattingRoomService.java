@@ -4,7 +4,12 @@ import kr.heeseong.chatting.old.event_enum.ChattingRoomType;
 import kr.heeseong.chatting.old.event_enum.MessageEventType;
 import kr.heeseong.chatting.old.exceptions.*;
 import kr.heeseong.chatting.old.mapper.ChattingMapper;
-import kr.heeseong.chatting.old.model.*;
+import kr.heeseong.chatting.room.model.ChattingRoom;
+import kr.heeseong.chatting.room.model.ChattingRoomData;
+import kr.heeseong.chatting.room.model.EventManager;
+import kr.heeseong.chatting.room.model.MessageEvent;
+import kr.heeseong.chatting.user.model.ChattingUser;
+import kr.heeseong.chatting.user.model.ChattingUserData;
 import kr.heeseong.chatting.user.service.ChattingUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,14 +28,14 @@ public class ChattingRoomService {
 
     //채팅 방
     private ConcurrentHashMap<Integer, ChattingRoomData> chattingRooms = new ConcurrentHashMap<>();
+
     //채팅 유저
     private ConcurrentHashMap<Long, ChattingUserData> chattingUsers = new ConcurrentHashMap<>();
+
     //채팅 방 인덱스
     private Long chattingRoomSeq = 1L;
     private final ChattingMapper chattingMapper;
     private final ChattingUserService chattingUserService;
-
-
 
     public ChattingRoom enterChattingRoom(ChattingRoom chattingRoom) throws Exception {
 
@@ -77,15 +82,15 @@ public class ChattingRoomService {
         return null;
     }
 
-    public ArrayList<ChattingUsers> listUsers(int roomIdx) {
-        ArrayList<ChattingUsers> userList = new ArrayList<ChattingUsers>();
+    public ArrayList<ChattingUser> listUsers(int roomIdx) {
+        ArrayList<ChattingUser> userList = new ArrayList<>();
 
         ChattingRoomData chattingRoomData = chattingRooms.get(roomIdx);
         if (chattingRoomData == null) {
             return null;
         }
 
-        for (Map.Entry<Long, ChattingUsers> userEntry : chattingRoomData.getUserList().entrySet()) {
+        for (Map.Entry<Long, ChattingUser> userEntry : chattingRoomData.getUserList().entrySet()) {
             userList.add(userEntry.getValue());
         }
 
@@ -95,7 +100,7 @@ public class ChattingRoomService {
     public void leaveChatRoom(int programIdx, int userIdx, long internalIdx) throws Exception {
         this.goleaveChatRoom(internalIdx, programIdx, null);
         MessageEvent roomMessageEvent = new MessageEvent(MessageEventType.LEAVE_USER.getValue(), programIdx, userIdx, 0, "", "", "");
-        chattingMapper.insertEvent(roomMessageEvent);
+        //chattingMapper.insertEvent(roomMessageEvent);
     }
 
 
@@ -104,22 +109,22 @@ public class ChattingRoomService {
         this.addBlackList(internalIdx, programIdx, blackUserIdx);
 
         MessageEvent roomMessageEvent = new MessageEvent(MessageEventType.ADD_BLACKLIST.getValue(), programIdx, blackUserIdx, userIdx, "", "", "");
-        chattingMapper.insertEvent(roomMessageEvent);
+        //chattingMapper.insertEvent(roomMessageEvent);
     }
 
     public void removeBlackList(long internalIdx, int userIdx, int programIdx, long blackUserIdx) throws Exception {
         this.removeBlackList(internalIdx, programIdx, blackUserIdx);
-        MessageEvent messageEvent = new MessageEvent(MessageEventType.REMOVE_BLACKLIST.getValue(), programIdx, blackUserIdx, userIdx, "", "", "");
-        chattingMapper.insertEvent(messageEvent);
+        MessageEvent messageEventOld = new MessageEvent(MessageEventType.REMOVE_BLACKLIST.getValue(), programIdx, blackUserIdx, userIdx, "", "", "");
+        //chattingMapper.insertEvent(messageEventOld);
     }
 
-    public MessageEvent sendEvent(long internalIdx, MessageEvent messageEvent) throws Exception {
-        chattingMapper.insertEvent(messageEvent);
-        messageEvent.setIdx(messageEvent.getIdx());
+    public MessageEvent sendEvent(long internalIdx, MessageEvent messageEventOld) throws Exception {
+        //chattingMapper.insertEvent(messageEventOld);
+        messageEventOld.setIdx(messageEventOld.getIdx());
 
-        this.sendMessageEvent(internalIdx, messageEvent);
+        this.sendMessageEvent(internalIdx, messageEventOld);
 
-        return messageEvent;
+        return messageEventOld;
     }
 
     public ArrayList<MessageEvent> getNewEvents(long internalIdx) throws Exception {
@@ -138,19 +143,19 @@ public class ChattingRoomService {
             chattingRoomData = createChattingRoom(chattingRoom);
         }
 
-        ChattingUserData chattingUserData = setChattingUser(chattingRoom.getChattingUser());
+        ChattingUserData ChattingUserData = setChattingUser(chattingRoom.getChattingUser());
 
-        if (chattingUserService.addUser(chattingUserData.getChattingUsers()) == -1) {
+        if (chattingRoomData.addUser(ChattingUserData.getChattingUser()) == -1) {
             throw new UserExistException();
         }
 
-        chattingUserData.setProgramIdx(chattingRoom.getProgramIdx());
+        ChattingUserData.setProgramIdx(chattingRoom.getProgramIdx());
 
-        MessageEvent messageEvent = EventManager.makeEnterRoomEvent(chattingRoom.getProgramIdx(), chattingRoom.getChattingUser());
-        sendMessageEvent(chattingUserData.getInternalIdx(), messageEvent);
+        MessageEvent messageEventOld = EventManager.makeEnterRoomEvent(chattingRoom.getProgramIdx(), chattingRoom.getChattingUser());
+        sendMessageEvent(ChattingUserData.getInternalIdx(), messageEventOld);
         //chattingMapper.insertEvent(messageEvent);
 
-        chattingRoom.setInternalIdx(chattingUserData.getInternalIdx());
+        chattingRoom.setInternalIdx(ChattingUserData.getInternalIdx());
         return chattingRoom;
     }
 
@@ -171,9 +176,9 @@ public class ChattingRoomService {
             if (chatRoomManager.getInternalUsers().size() == 0) {
                 removeChatRoom(internalIdx, roomIdx);
             } else {
-                MessageEvent messageEvent = EventManager.makeLeaveRoomEvent(roomIdx, user.getUserIdx());
-                sendMessageEvent(internalIdx, messageEvent);
-                chattingMapper.insertEvent(messageEvent);
+                MessageEvent messageEventOld = EventManager.makeLeaveRoomEvent(roomIdx, user.getUserIdx());
+                sendMessageEvent(internalIdx, messageEventOld);
+                //chattingMapper.insertEvent(messageEventOld);
             }
         } else {
             throw new BadArgumentException();
@@ -220,31 +225,31 @@ public class ChattingRoomService {
         }
     }
 
-    private void sendMessageEvent(long internalIdx, MessageEvent messageEvent) throws Exception {
-        if (messageEvent.getMessageEventType() == MessageEventType.NORMAL_MSG.getValue()) {
-            sendMessage(internalIdx, messageEvent);
+    private void sendMessageEvent(long internalIdx, MessageEvent messageEventOld) throws Exception {
+        if (messageEventOld.getMessageEventType() == MessageEventType.NORMAL_MSG.getValue()) {
+            sendMessage(internalIdx, messageEventOld);
 
-        } else if (messageEvent.getMessageEventType() == MessageEventType.ENTER_USER.getValue()) {
-            sendEventToRoom(internalIdx, messageEvent, false);
+        } else if (messageEventOld.getMessageEventType() == MessageEventType.ENTER_USER.getValue()) {
+            sendEventToRoom(internalIdx, messageEventOld, false);
 
-        } else if (messageEvent.getMessageEventType() == MessageEventType.LEAVE_USER.getValue()) {
-            sendEventToRoom(internalIdx, messageEvent, false);
+        } else if (messageEventOld.getMessageEventType() == MessageEventType.LEAVE_USER.getValue()) {
+            sendEventToRoom(internalIdx, messageEventOld, false);
 
-        } else if (messageEvent.getMessageEventType() == MessageEventType.APPROVED_MSG.getValue()) {
-            sendEventToPerson(messageEvent.getProgramIdx(), messageEvent.getFromUserIdx(), messageEvent);
-            MessageEvent newMessageEvent = EventManager.cloneEvent(messageEvent);
-            newMessageEvent.setMessageEventType(MessageEventType.NORMAL_MSG.getValue());
-            sendEventToRoom(internalIdx, newMessageEvent);
+        } else if (messageEventOld.getMessageEventType() == MessageEventType.APPROVED_MSG.getValue()) {
+            sendEventToPerson(messageEventOld.getProgramIdx(), messageEventOld.getFromUserIdx(), messageEventOld);
+            MessageEvent newMessageEventOld = EventManager.cloneEvent(messageEventOld);
+            newMessageEventOld.setMessageEventType(MessageEventType.NORMAL_MSG.getValue());
+            sendEventToRoom(internalIdx, newMessageEventOld);
 
-        } else if (messageEvent.getMessageEventType() == MessageEventType.REJECTED_MSG.getValue()) {
-            sendEventToPerson(messageEvent.getProgramIdx(), messageEvent.getFromUserIdx(), messageEvent);
+        } else if (messageEventOld.getMessageEventType() == MessageEventType.REJECTED_MSG.getValue()) {
+            sendEventToPerson(messageEventOld.getProgramIdx(), messageEventOld.getFromUserIdx(), messageEventOld);
 
-        } else if (messageEvent.getMessageEventType() == MessageEventType.DIRECT_MSG.getValue()) {
-            sendEventToPerson(messageEvent.getProgramIdx(), messageEvent.getToUserIdx(), messageEvent);
-            sendEventToPerson(internalIdx, messageEvent);
+        } else if (messageEventOld.getMessageEventType() == MessageEventType.DIRECT_MSG.getValue()) {
+            sendEventToPerson(messageEventOld.getProgramIdx(), messageEventOld.getToUserIdx(), messageEventOld);
+            sendEventToPerson(internalIdx, messageEventOld);
 
-        } else if (messageEvent.getMessageEventType() == MessageEventType.ADMIN_MSG.getValue()) {
-            sendEventToRoom(internalIdx, messageEvent, true);
+        } else if (messageEventOld.getMessageEventType() == MessageEventType.ADMIN_MSG.getValue()) {
+            sendEventToRoom(internalIdx, messageEventOld, true);
 
         } else {
             throw new Exception();
@@ -260,17 +265,17 @@ public class ChattingRoomService {
 		}*/
     }
 
-    public ChattingUserData setChattingUser(ChattingUsers chattingUsers) {
-        chattingUsers.setInternalIdx(chattingRoomSeq);
+    public ChattingUserData setChattingUser(ChattingUser chattingUser) {
+        chattingUser.setInternalIdx(chattingRoomSeq);
 
         //자주 사용 되는 객체 이기 때문에 약한 참조 처리
-        WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUsers));
-        ChattingUserData chattingUserData = userRef.get();
+        WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUser));
+        ChattingUserData ChattingUserData = userRef.get();
 
-        this.chattingUsers.put(chattingRoomSeq, chattingUserData);
+        this.chattingUsers.put(chattingRoomSeq, ChattingUserData);
         chattingRoomSeq = chattingRoomSeq + 1;
 
-        return chattingUserData;
+        return ChattingUserData;
     }
 
     public int removeUser(long internalIdx, Iterator<Map.Entry<Long, ChattingUserData>> userIteration) {
@@ -308,9 +313,9 @@ public class ChattingRoomService {
             if (chatRoomManager.getInternalUsers().size() == 0) {
                 this.removeChatRoom(internalIdx, roomIdx);
             } else {
-                MessageEvent messageEvent = EventManager.makeLeaveRoomEvent(roomIdx, user.getUserIdx());
-                this.sendEvent(internalIdx, messageEvent);
-                chattingMapper.insertEvent(messageEvent);
+                MessageEvent messageEventOld = EventManager.makeLeaveRoomEvent(roomIdx, user.getUserIdx());
+                this.sendEvent(internalIdx, messageEventOld);
+                //chattingMapper.insertEvent(messageEventOld);
             }
         } else {
             throw new BadArgumentException();
@@ -327,9 +332,9 @@ public class ChattingRoomService {
 
         chattingRooms.remove(roomIdx);
 
-        MessageEvent messageEvent = EventManager.removeChatRoomEvent(roomIdx);
-        sendEvent(internalIdx, messageEvent);
-        chattingMapper.insertEvent(messageEvent);
+        MessageEvent messageEventOld = EventManager.removeChatRoomEvent(roomIdx);
+        sendEvent(internalIdx, messageEventOld);
+        //chattingMapper.insertEvent(messageEventOld);
     }
 
     private void checkAdmin(long internalIdx) throws Exception {
@@ -341,7 +346,7 @@ public class ChattingRoomService {
     }
 
     private ChattingRoomData createChattingRoom(ChattingRoom chattingRoom) throws Exception {
-        ChattingRoomData chattingRoomData;
+        ChattingRoomData ChattingRoomData;
 
         if (chattingRooms.get(chattingRoom.getProgramIdx()) != null) {
             log.error("chatting room exist exception / chattingRoomSeq : {}", chattingRoom.getProgramIdx());
@@ -349,9 +354,9 @@ public class ChattingRoomService {
         }
 
         WeakReference<ChattingRoomData> chatRoomRef = new WeakReference<>(new ChattingRoomData());
-        chattingRoomData = chatRoomRef.get();
-        chattingRoomData.setChattingRoom(chattingRoom);
-        chattingRooms.put(chattingRoomData.getProgramIdx(), chattingRoomData);
+        ChattingRoomData = chatRoomRef.get();
+        ChattingRoomData.setChattingRoom(chattingRoom);
+        chattingRooms.put(ChattingRoomData.getProgramIdx(), ChattingRoomData);
 
 //        if (log) {
 //            MessageEvent messageEvent = EventManager.makeCreateRoomEvent(chattingRoom);
@@ -359,45 +364,45 @@ public class ChattingRoomService {
 //            chattingMapper.insertEvent(messageEvent);
 //        }
 
-        return chattingRoomData;
+        return ChattingRoomData;
     }
 
-    private void sendEventToPerson(int roomIdx, long userIdx, MessageEvent messageEvent) {
+    private void sendEventToPerson(int roomIdx, long userIdx, MessageEvent messageEventOld) {
         ChattingRoomData room = chattingRooms.get(roomIdx);
         if (room != null) {
             for (Long keyIndex : room.getInternalUsers()) {
                 ChattingUserData user = chattingUsers.get(keyIndex);
                 if (userIdx == user.getUserIdx()) {
-                    sendEventToPerson(keyIndex, messageEvent);
+                    sendEventToPerson(keyIndex, messageEventOld);
                 }
             }
         }
     }
 
-    private void sendEventToRoom(long internalIdx, MessageEvent messageEvent, boolean sendMyself) {
-        ChattingRoomData room = chattingRooms.get(messageEvent.getProgramIdx());
+    private void sendEventToRoom(long internalIdx, MessageEvent messageEventOld, boolean sendMyself) {
+        ChattingRoomData room = chattingRooms.get(messageEventOld.getProgramIdx());
         if (room != null) {
             for (Long keyIndex : room.getInternalUsers()) {
                 if (sendMyself == true || (sendMyself == false && internalIdx != keyIndex)) {
                     ChattingUserData user = chattingUsers.get(keyIndex);
                     if (user != null) {
-                        user.postMessage(messageEvent);
+                        user.postMessage(messageEventOld);
                     }
                 }
             }
         }
     }
 
-    private void sendEventToRoom(long internalIdx, MessageEvent messageEvent) {
-        sendEventToRoom(internalIdx, messageEvent, true);
+    private void sendEventToRoom(long internalIdx, MessageEvent messageEventOld) {
+        sendEventToRoom(internalIdx, messageEventOld, true);
     }
 
-    private void sendEventToPerson(long internalIdx, MessageEvent messageEvent) {
+    private void sendEventToPerson(long internalIdx, MessageEvent messageEventOld) {
         ChattingUserData user = chattingUsers.get(internalIdx);
         if (user != null) {
             try {
                 //메시지 담는 구간
-                user.postMessage(messageEvent);
+                user.postMessage(messageEventOld);
             } catch (Exception e) {
                 if (user.checkTimeout()) {
                     try {
@@ -412,42 +417,42 @@ public class ChattingRoomService {
     }
 
 
-    public void sendMessage(long internalIdx, MessageEvent messageEvent) throws Exception {
+    public void sendMessage(long internalIdx, MessageEvent messageEventOld) throws Exception {
 
-        ChattingRoomData room = chattingRooms.get(messageEvent.getProgramIdx());
+        ChattingRoomData room = chattingRooms.get(messageEventOld.getProgramIdx());
         if (room != null) {
             ChattingUserData user;
 
-            if (room.isBlackList(messageEvent.getFromUserIdx())) {
-                messageEvent.setMessageEventType(MessageEventType.BLOCKED_MSG.getValue());
-                sendEventToPerson(internalIdx, messageEvent);
+            if (room.isBlackList(messageEventOld.getFromUserIdx())) {
+                messageEventOld.setMessageEventType(MessageEventType.BLOCKED_MSG.getValue());
+                sendEventToPerson(internalIdx, messageEventOld);
                 return;
             }
 
             if (room.getChattingRoomType() == ChattingRoomType.MANY_TO_MANY.getValue()) {
-                sendEventToRoom(internalIdx, messageEvent);
+                sendEventToRoom(internalIdx, messageEventOld);
 
             } else if (room.getChattingRoomType() == ChattingRoomType.ONE_TO_MANY.getValue()) {
                 user = chattingUsers.get(internalIdx);
                 if (user != null && user.isAdmin()) {
-                    sendEventToRoom(internalIdx, messageEvent);
+                    sendEventToRoom(internalIdx, messageEventOld);
                 } else {
-                    sendEventToPerson(room.getProgramIdx(), room.getAdminIdx(), messageEvent);
-                    sendEventToPerson(room.getProgramIdx(), messageEvent.getFromUserIdx(), messageEvent);
+                    sendEventToPerson(room.getProgramIdx(), room.getAdminIdx(), messageEventOld);
+                    sendEventToPerson(room.getProgramIdx(), messageEventOld.getFromUserIdx(), messageEventOld);
                 }
 
             } else if (room.getChattingRoomType() == ChattingRoomType.APPROVAL.getValue()) {
                 user = chattingUsers.get(internalIdx);
                 if (user != null && user.isAdmin()) {
                     // admin user : without approval
-                    sendEventToRoom(internalIdx, messageEvent);
+                    sendEventToRoom(internalIdx, messageEventOld);
                 } else {
                     // normal user : send approval request to admin
-                    messageEvent.setMessageEventType(MessageEventType.REQ_APPROVAL_MSG.getValue());
-                    sendEventToPerson(room.getProgramIdx(), room.getAdminIdx(), messageEvent);
-                    MessageEvent waitMessageEvent = EventManager.cloneEvent(messageEvent);
-                    waitMessageEvent.setMessageEventType(MessageEventType.WAIT_APPROVAL_MSG.getValue());
-                    sendEventToPerson(waitMessageEvent.getProgramIdx(), waitMessageEvent.getFromUserIdx(), waitMessageEvent);
+                    messageEventOld.setMessageEventType(MessageEventType.REQ_APPROVAL_MSG.getValue());
+                    sendEventToPerson(room.getProgramIdx(), room.getAdminIdx(), messageEventOld);
+                    MessageEvent waitMessageEventOld = EventManager.cloneEvent(messageEventOld);
+                    waitMessageEventOld.setMessageEventType(MessageEventType.WAIT_APPROVAL_MSG.getValue());
+                    sendEventToPerson(waitMessageEventOld.getProgramIdx(), waitMessageEventOld.getFromUserIdx(), waitMessageEventOld);
                 }
             }
         } else {

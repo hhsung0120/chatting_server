@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class ChattingUserData {
 
     private ChattingUser ChattingUser;
-    private int programIdx;
+    private Long programIdx;
     private ArrayBlockingQueue<MessageEvent> messageQueue;
     private long latestMessageTime;
     private long DEFAULT_MESSAGE_TIMEOUT = 60 * 1000 * 2; // 2 minutes

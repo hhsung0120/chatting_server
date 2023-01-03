@@ -17,9 +17,9 @@ public class ChattingRoom extends ChattingUser {
     private String description;
     private int roomType; //
     private long adminIdx;
-    private String status;
 
     //리팩토링 영역
+    private Long chattingRoomSeq;
     private int categorySeq;
     private String roomTitle;
     private String password;

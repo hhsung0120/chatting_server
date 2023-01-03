@@ -42,11 +42,11 @@ public class ChattingRoomData {
 	}
 	
 	@JsonIgnore
-	public int getProgramIdx() {
+	public Long getChattingRoomSeq() {
 		if (chattingRoom != null) {
-			return chattingRoom.getProgramIdx();
+			return chattingRoom.getChattingRoomSeq();
 		}
-		return -1;
+		return 0L;
 	}
 
 	@JsonIgnore
@@ -57,13 +57,13 @@ public class ChattingRoomData {
 		return -1;
 	}
 	
-	@JsonIgnore
-	public String getStatus() {
-		if (chattingRoom != null) {
-			return chattingRoom.getStatus();
-		}
-		return null;
-	}
+//	@JsonIgnore
+//	public String getStatus() {
+//		if (chattingRoom != null) {
+//			return chattingRoom.getStatus();
+//		}
+//		return null;
+//	}
 	
 	@JsonIgnore
 	public int getChattingRoomType() {

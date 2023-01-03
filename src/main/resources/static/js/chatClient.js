@@ -35,6 +35,7 @@ var ChatClient = function() {
 				userId : userInfo.userId,
 				userIdx : userInfo.userIdx,
 				userName : userInfo.userName,
+				chattingRoomSeq : programIdx,
 
 				//고정 값
 				password : 1234,

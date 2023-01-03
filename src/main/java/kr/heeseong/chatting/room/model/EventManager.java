@@ -8,7 +8,7 @@ public class EventManager {
 	public static MessageEvent makeCreateRoomEvent(ChattingRoom chattingRoom) {
 		MessageEvent messageEventOld = new MessageEvent();
 		messageEventOld.setMessageEventType(MessageEventType.CREATE_CHATROOM.getValue());
-		messageEventOld.setProgramIdx(chattingRoom.getProgramIdx());
+		messageEventOld.setProgramIdx(chattingRoom.getChattingRoomSeq());
 		messageEventOld.setToUserIdx(0);
 		messageEventOld.setFromUserIdx(chattingRoom.getAdminIdx());
 		messageEventOld.setUserName(chattingRoom.getName());
@@ -17,7 +17,7 @@ public class EventManager {
 		return messageEventOld;
 	}
 
-	public static MessageEvent makeEnterRoomEvent(int roomIdx, ChattingUser chatroomUser) {
+	public static MessageEvent makeEnterRoomEvent(Long roomIdx, ChattingUser chatroomUser) {
 		MessageEvent messageEventOld = new MessageEvent();
 		messageEventOld.setMessageEventType(MessageEventType.ENTER_USER.getValue());
 		messageEventOld.setProgramIdx(roomIdx);
@@ -29,7 +29,7 @@ public class EventManager {
 		return messageEventOld;
 	}
 	
-	public static MessageEvent makeLeaveRoomEvent(int programIdx, long userIdx) {
+	public static MessageEvent makeLeaveRoomEvent(Long programIdx, long userIdx) {
 		MessageEvent messageEventOld = new MessageEvent();
 		messageEventOld.setMessageEventType(MessageEventType.LEAVE_USER.getValue());
 		messageEventOld.setProgramIdx(programIdx);
@@ -38,7 +38,7 @@ public class EventManager {
 		return messageEventOld;
 	}
 	
-	public static MessageEvent removeChatRoomEvent(int roomIdx) {
+	public static MessageEvent removeChatRoomEvent(Long roomIdx) {
 		MessageEvent messageEventOld = new MessageEvent();
 		messageEventOld.setMessageEventType(MessageEventType.REMOVE_CHATROOM.getValue());
 		messageEventOld.setProgramIdx(roomIdx);

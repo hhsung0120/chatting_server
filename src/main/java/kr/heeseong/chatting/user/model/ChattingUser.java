@@ -14,7 +14,7 @@ public class ChattingUser {
     public ChattingUser() {
     }
 
-    public ChattingUser(long userIdx, String userId, String userName, boolean isAdmin) {
+    public ChattingUser(Long userIdx, String userId, String userName, boolean isAdmin) {
         this.userIdx = userIdx;
         this.userId = userId;
         this.userName = userName;

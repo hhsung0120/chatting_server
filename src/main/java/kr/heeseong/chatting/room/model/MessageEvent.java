@@ -11,7 +11,7 @@ public class MessageEvent {
 
 	private int idx;
 	private int messageEventType;
-	private int programIdx;
+	private Long programIdx;
 	private long fromUserIdx;
 	private long toUserIdx;
 	private String userId;
@@ -19,7 +19,7 @@ public class MessageEvent {
 	private String message;
 
 
-	public MessageEvent(int messageEventType, int programIdx, long toUserIdx, long fromUserIdx, String userName, String msg, String userId) {
+	public MessageEvent(int messageEventType, Long programIdx, long toUserIdx, long fromUserIdx, String userName, String msg, String userId) {
 		this.messageEventType = messageEventType;
 		this.programIdx = programIdx;
 		this.fromUserIdx = fromUserIdx;

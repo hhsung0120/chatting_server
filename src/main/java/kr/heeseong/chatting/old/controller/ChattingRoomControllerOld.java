@@ -48,7 +48,7 @@ public class ChattingRoomControllerOld {
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     public ArrayList<ChattingUser> listUsers(
-            @RequestParam("programIdx") int programIdx) {
+            @RequestParam("programIdx") Long programIdx) {
         return chattingService.listUsers(programIdx);
     }
 
@@ -56,7 +56,7 @@ public class ChattingRoomControllerOld {
     public void leaveChatRoom(
             @RequestHeader("internalIdx") long internalIdx
             , @RequestHeader("programIdx") Long programIdx
-            , @RequestHeader("userIdx") int userIdx) throws Exception {
+            , @RequestHeader("userIdx") Long userIdx) throws Exception {
         chattingService.leaveChatRoom(programIdx, userIdx, internalIdx);
     }
 
@@ -71,7 +71,7 @@ public class ChattingRoomControllerOld {
     public void addBlackList(
             @RequestHeader("internalIdx") long internalIdx,
             @RequestHeader("programIdx") Long programIdx,
-            @RequestHeader("userIdx") int userIdx,
+            @RequestHeader("userIdx") Long userIdx,
             @RequestBody ChattingUsersOld blackUser) throws Exception {
         chattingService.addBlackList(internalIdx, userIdx, programIdx, blackUser.getUserIdx());
     }
@@ -80,7 +80,7 @@ public class ChattingRoomControllerOld {
     public void removeBlackList(
             @RequestHeader("internalIdx") long internalIdx,
             @RequestHeader("programIdx") Long programIdx,
-            @RequestHeader("userIdx") int userIdx,
+            @RequestHeader("userIdx") Long userIdx,
             @RequestBody ChattingUsersOld blackUser) throws Exception {
         chattingService.removeBlackList(internalIdx, userIdx, programIdx, blackUser.getUserIdx());
     }

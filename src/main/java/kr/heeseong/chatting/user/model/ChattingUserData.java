@@ -2,16 +2,19 @@ package kr.heeseong.chatting.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.heeseong.chatting.room.model.MessageEvent;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-@Data
+@Getter
 public class ChattingUserData {
 
     private ChattingUser ChattingUser;
+
+    @Setter
     private Long programIdx;
     private ArrayBlockingQueue<MessageEvent> messageQueue;
     private long latestMessageTime;

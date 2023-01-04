@@ -82,7 +82,7 @@ public class ChattingRoomService {
         return null;
     }
 
-    public ArrayList<ChattingUser> listUsers(int roomIdx) {
+    public ArrayList<ChattingUser> listUsers(Long roomIdx) {
         ArrayList<ChattingUser> userList = new ArrayList<>();
 
         ChattingRoomData chattingRoomData = chattingRooms.get(roomIdx);
@@ -97,14 +97,14 @@ public class ChattingRoomService {
         return userList;
     }
 
-    public void leaveChatRoom(Long programIdx, int userIdx, Long internalIdx) throws Exception {
+    public void leaveChatRoom(Long programIdx, Long userIdx, Long internalIdx) throws Exception {
         this.goleaveChatRoom(internalIdx, programIdx, null);
-        MessageEvent roomMessageEvent = new MessageEvent(MessageEventType.LEAVE_USER.getValue(), programIdx, userIdx, 0, "", "", "");
+        MessageEvent roomMessageEvent = new MessageEvent(MessageEventType.LEAVE_USER.getValue(), programIdx, userIdx, 0L, "", "", "");
         //chattingMapper.insertEvent(roomMessageEvent);
     }
 
 
-    public void addBlackList(long internalIdx, int userIdx, Long programIdx, long blackUserIdx) throws Exception {
+    public void addBlackList(long internalIdx, Long userIdx, Long programIdx, long blackUserIdx) throws Exception {
         //TODO 메모리에 담는 구조임 현재, 디비에도 담고 꺼낼 수 있도록 개선 해야함
         this.addBlackList(internalIdx, programIdx, blackUserIdx);
 
@@ -112,7 +112,7 @@ public class ChattingRoomService {
         //chattingMapper.insertEvent(roomMessageEvent);
     }
 
-    public void removeBlackList(long internalIdx, int userIdx, Long programIdx, long blackUserIdx) throws Exception {
+    public void removeBlackList(long internalIdx, Long userIdx, Long programIdx, long blackUserIdx) throws Exception {
         this.removeBlackList(internalIdx, programIdx, blackUserIdx);
         MessageEvent messageEventOld = new MessageEvent(MessageEventType.REMOVE_BLACKLIST.getValue(), programIdx, blackUserIdx, userIdx, "", "", "");
         //chattingMapper.insertEvent(messageEventOld);
@@ -143,19 +143,18 @@ public class ChattingRoomService {
             chattingRoomData = createChattingRoom(chattingRoom);
         }
 
-        ChattingUserData ChattingUserData = setChattingUser(chattingRoom.getChattingUser());
-
-        if (chattingRoomData.addUser(ChattingUserData.getChattingUser()) == -1) {
+        ChattingUserData chattingUserData = setChattingUser(chattingRoom.getChattingUser());
+        if (!chattingRoomData.addUser(chattingUserData.getChattingUser())) {
             throw new UserExistException();
         }
 
-        ChattingUserData.setProgramIdx(chattingRoom.getChattingRoomSeq());
+        MessageEvent messageEvent = EventManager.makeEnterRoomEvent(chattingRoom);
+        sendMessageEvent(chattingUserData.getInternalIdx(), messageEvent);
 
-        MessageEvent messageEventOld = EventManager.makeEnterRoomEvent(chattingRoom.getChattingRoomSeq(), chattingRoom.getChattingUser());
-        sendMessageEvent(ChattingUserData.getInternalIdx(), messageEventOld);
+        chattingUserData.setProgramIdx(chattingRoom.getChattingRoomSeq());
+        chattingRoom.setInternalIdx(chattingUserData.getInternalIdx());
+
         //chattingMapper.insertEvent(messageEvent);
-
-        chattingRoom.setInternalIdx(ChattingUserData.getInternalIdx());
         return chattingRoom;
     }
 
@@ -266,14 +265,12 @@ public class ChattingRoomService {
     }
 
     public ChattingUserData setChattingUser(ChattingUser chattingUser) {
-        chattingUser.setInternalIdx(chattingRoomSeq);
+        chattingUser.setInternalIdx(chattingRoomSeq++);
 
-        //자주 사용 되는 객체 이기 때문에 약한 참조 처리
         WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUser));
         ChattingUserData ChattingUserData = userRef.get();
 
-        this.chattingUsers.put(chattingRoomSeq, ChattingUserData);
-        chattingRoomSeq = chattingRoomSeq + 1;
+        this.chattingUsers.put(chattingUser.getInternalIdx(), ChattingUserData);
 
         return ChattingUserData;
     }
@@ -346,7 +343,6 @@ public class ChattingRoomService {
     }
 
     private ChattingRoomData createChattingRoom(ChattingRoom chattingRoom) throws Exception {
-        ChattingRoomData ChattingRoomData;
 
         if (chattingRooms.get(chattingRoom.getChattingRoomSeq()) != null) {
             log.error("chatting room exist exception / chattingRoomSeq : {}", chattingRoom.getChattingRoomSeq());
@@ -354,8 +350,9 @@ public class ChattingRoomService {
         }
 
         WeakReference<ChattingRoomData> chatRoomRef = new WeakReference<>(new ChattingRoomData());
-        ChattingRoomData = chatRoomRef.get();
+        ChattingRoomData ChattingRoomData = chatRoomRef.get();
         ChattingRoomData.setChattingRoom(chattingRoom);
+
         chattingRooms.put(ChattingRoomData.getChattingRoomSeq(), ChattingRoomData);
 
 //        if (log) {

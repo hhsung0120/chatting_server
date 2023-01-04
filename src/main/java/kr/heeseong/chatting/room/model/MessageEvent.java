@@ -1,31 +1,48 @@
 package kr.heeseong.chatting.room.model;
 
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter @Setter @ToString
-@NoArgsConstructor
+@Getter
+@ToString
 public class MessageEvent {
 
-	private int idx;
-	private int messageEventType;
-	private Long programIdx;
-	private long fromUserIdx;
-	private long toUserIdx;
-	private String userId;
-	private String userName;
-	private String message;
+    @Setter
+    private Long idx;
 
+    @Setter
+    private int messageEventType;
+    private Long programIdx;
+    private Long fromUserIdx;
+    private Long toUserIdx;
+    private String userId;
+    private String userName;
+    private String message;
 
-	public MessageEvent(int messageEventType, Long programIdx, long toUserIdx, long fromUserIdx, String userName, String msg, String userId) {
-		this.messageEventType = messageEventType;
-		this.programIdx = programIdx;
-		this.fromUserIdx = fromUserIdx;
-		this.toUserIdx = toUserIdx;
-		this.userId = userId;
-		this.userName = userName;
-		this.message = msg;
-	}
+    public MessageEvent() {
+    }
+
+    @Builder
+    public MessageEvent(Long idx, int messageEventType, Long programIdx, Long fromUserIdx, Long toUserIdx, String userId, String userName, String message) {
+        this.idx = idx;
+        this.messageEventType = messageEventType;
+        this.programIdx = programIdx;
+        this.fromUserIdx = fromUserIdx;
+        this.toUserIdx = toUserIdx;
+        this.userId = userId;
+        this.userName = userName;
+        this.message = message;
+    }
+
+    public MessageEvent(int messageEventType, Long programIdx, Long toUserIdx, Long fromUserIdx, String userName, String msg, String userId) {
+        this.messageEventType = messageEventType;
+        this.programIdx = programIdx;
+        this.fromUserIdx = fromUserIdx;
+        this.toUserIdx = toUserIdx;
+        this.userId = userId;
+        this.userName = userName;
+        this.message = msg;
+    }
 }

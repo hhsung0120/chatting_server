@@ -21,6 +21,9 @@ public class ChattingUserData {
     private long DEFAULT_MESSAGE_TIMEOUT = 60 * 1000 * 2; // 2 minutes
     private long userTimeout = DEFAULT_MESSAGE_TIMEOUT;
 
+    public ChattingUserData() {
+    }
+
     public ChattingUserData(ChattingUser ChattingUser) {
         this.ChattingUser = ChattingUser;
         messageQueue = new ArrayBlockingQueue<>(10);

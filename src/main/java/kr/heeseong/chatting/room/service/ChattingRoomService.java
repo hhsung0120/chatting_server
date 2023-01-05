@@ -143,12 +143,23 @@ public class ChattingRoomService {
             chattingRoomData = createChattingRoom(chattingRoom);
         }
 
-        ChattingUserData chattingUserData = setChattingUser(chattingRoom.getChattingUser());
+        ChattingUserData chattingUserData;
+        try {
+            chattingUserData = setChattingUser(chattingRoom.getChattingUser());
+        } catch (Exception e) {
+            log.error("setChattingUser exception : {}", e.getMessage());
+            throw e;
+        }
+
         if (!chattingRoomData.addUser(chattingUserData.getChattingUser())) {
             throw new UserExistException();
         }
 
-        MessageEvent messageEvent = EventManager.makeEnterRoomEvent(chattingRoom);
+        MessageEvent messageEvent =
+                MessageEvent.enterRoomEventBuilder()
+                        .chattingRoom(chattingRoom)
+                        .build();
+
         sendMessageEvent(chattingUserData.getInternalIdx(), messageEvent);
 
         chattingUserData.setProgramIdx(chattingRoom.getChattingRoomSeq());
@@ -224,44 +235,45 @@ public class ChattingRoomService {
         }
     }
 
-    private void sendMessageEvent(long internalIdx, MessageEvent messageEventOld) throws Exception {
-        if (messageEventOld.getMessageEventType() == MessageEventType.NORMAL_MSG.getValue()) {
-            sendMessage(internalIdx, messageEventOld);
+    private void sendMessageEvent(Long internalIdx, MessageEvent messageEventOld) throws Exception {
 
-        } else if (messageEventOld.getMessageEventType() == MessageEventType.ENTER_USER.getValue()) {
+        if (messageEventOld.getMessageEventType() == MessageEventType.ENTER_USER.getValue()) {
             sendEventToRoom(internalIdx, messageEventOld, false);
-
-        } else if (messageEventOld.getMessageEventType() == MessageEventType.LEAVE_USER.getValue()) {
-            sendEventToRoom(internalIdx, messageEventOld, false);
-
-        } else if (messageEventOld.getMessageEventType() == MessageEventType.APPROVED_MSG.getValue()) {
-            sendEventToPerson(messageEventOld.getProgramIdx(), messageEventOld.getFromUserIdx(), messageEventOld);
-            MessageEvent newMessageEventOld = EventManager.cloneEvent(messageEventOld);
-            newMessageEventOld.setMessageEventType(MessageEventType.NORMAL_MSG.getValue());
-            sendEventToRoom(internalIdx, newMessageEventOld);
-
-        } else if (messageEventOld.getMessageEventType() == MessageEventType.REJECTED_MSG.getValue()) {
-            sendEventToPerson(messageEventOld.getProgramIdx(), messageEventOld.getFromUserIdx(), messageEventOld);
-
-        } else if (messageEventOld.getMessageEventType() == MessageEventType.DIRECT_MSG.getValue()) {
-            sendEventToPerson(messageEventOld.getProgramIdx(), messageEventOld.getToUserIdx(), messageEventOld);
-            sendEventToPerson(internalIdx, messageEventOld);
-
-        } else if (messageEventOld.getMessageEventType() == MessageEventType.ADMIN_MSG.getValue()) {
-            sendEventToRoom(internalIdx, messageEventOld, true);
-
-        } else {
-            throw new Exception();
         }
 
-		/*switch (event.getType()) {
-		case EventType.CREATE_CHATROOM:
-			sendEventToAll(internalIdx, event);
-			break;
-		case EventType.REMOVE_CHATROOM:
-			sendEventToAll(internalIdx, event);
-			break;
-		}*/
+        if (messageEventOld.getMessageEventType() == MessageEventType.NORMAL_MSG.getValue()) {
+            sendMessage(internalIdx, messageEventOld);
+        }
+
+//        if (messageEventOld.getMessageEventType() == MessageEventType.NORMAL_MSG.getValue()) {
+//            sendMessage(internalIdx, messageEventOld);
+//
+//        } else if (messageEventOld.getMessageEventType() == MessageEventType.ENTER_USER.getValue()) {
+//            sendEventToRoom(internalIdx, messageEventOld, false);
+//
+//        } else if (messageEventOld.getMessageEventType() == MessageEventType.LEAVE_USER.getValue()) {
+//            sendEventToRoom(internalIdx, messageEventOld, false);
+//
+//        } else if (messageEventOld.getMessageEventType() == MessageEventType.APPROVED_MSG.getValue()) {
+//            sendEventToPerson(messageEventOld.getProgramIdx(), messageEventOld.getFromUserIdx(), messageEventOld);
+//            MessageEvent newMessageEventOld = EventManager.cloneEvent(messageEventOld);
+//            newMessageEventOld.setMessageEventType(MessageEventType.NORMAL_MSG.getValue());
+//            sendEventToRoom(internalIdx, newMessageEventOld);
+//
+//        } else if (messageEventOld.getMessageEventType() == MessageEventType.REJECTED_MSG.getValue()) {
+//            sendEventToPerson(messageEventOld.getProgramIdx(), messageEventOld.getFromUserIdx(), messageEventOld);
+//
+//        } else if (messageEventOld.getMessageEventType() == MessageEventType.DIRECT_MSG.getValue()) {
+//            sendEventToPerson(messageEventOld.getProgramIdx(), messageEventOld.getToUserIdx(), messageEventOld);
+//            sendEventToPerson(internalIdx, messageEventOld);
+//
+//        } else if (messageEventOld.getMessageEventType() == MessageEventType.ADMIN_MSG.getValue()) {
+//            sendEventToRoom(internalIdx, messageEventOld, true);
+//
+//        } else {
+//            throw new Exception();
+//        }
+
     }
 
     public ChattingUserData setChattingUser(ChattingUser chattingUser) {
@@ -414,7 +426,7 @@ public class ChattingRoomService {
     }
 
 
-    public void sendMessage(long internalIdx, MessageEvent messageEventOld) throws Exception {
+    public void sendMessage(Long internalIdx, MessageEvent messageEventOld) throws Exception {
 
         ChattingRoomData room = chattingRooms.get(messageEventOld.getProgramIdx());
         if (room != null) {

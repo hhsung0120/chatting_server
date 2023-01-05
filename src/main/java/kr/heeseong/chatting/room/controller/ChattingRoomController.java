@@ -1,6 +1,5 @@
 package kr.heeseong.chatting.room.controller;
 
-import kr.heeseong.chatting.old.model.ChattingRoomOld;
 import kr.heeseong.chatting.room.model.ChattingRoom;
 import kr.heeseong.chatting.room.service.ChattingRoomService;
 import lombok.RequiredArgsConstructor;

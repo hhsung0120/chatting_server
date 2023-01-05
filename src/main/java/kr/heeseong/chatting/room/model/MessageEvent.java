@@ -1,5 +1,6 @@
 package kr.heeseong.chatting.room.model;
 
+import kr.heeseong.chatting.old.event_enum.MessageEventType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,5 +45,15 @@ public class MessageEvent {
         this.userId = userId;
         this.userName = userName;
         this.message = msg;
+    }
+
+    @Builder(builderClassName = "enterRoomEventBuilder", builderMethodName = "enterRoomEventBuilder")
+    public MessageEvent(ChattingRoom chattingRoom) {
+        this.messageEventType = MessageEventType.ENTER_USER.getValue();
+        this.programIdx = chattingRoom.getChattingRoomSeq();
+        this.toUserIdx = 0L;
+        this.fromUserIdx = chattingRoom.getUserIdx();
+        this.userId = chattingRoom.getUserId();
+        this.userName = chattingRoom.getUserName();
     }
 }

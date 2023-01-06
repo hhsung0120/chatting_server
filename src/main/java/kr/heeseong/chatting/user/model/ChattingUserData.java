@@ -1,14 +1,15 @@
 package kr.heeseong.chatting.user.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import kr.heeseong.chatting.room.model.MessageEvent;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Getter
 public class ChattingUserData {
 
@@ -20,9 +21,6 @@ public class ChattingUserData {
     private long latestMessageTime;
     private long DEFAULT_MESSAGE_TIMEOUT = 60 * 1000 * 2; // 2 minutes
     private long userTimeout = DEFAULT_MESSAGE_TIMEOUT;
-
-    public ChattingUserData() {
-    }
 
     public ChattingUserData(ChattingUser ChattingUser) {
         this.ChattingUser = ChattingUser;
@@ -50,13 +48,14 @@ public class ChattingUserData {
         return ChattingUser.isAdmin();
     }
 
-    public void postMessage(MessageEvent messageEventOld) {
+    //메시지 전송
+    public void postMessage(MessageEvent messageEvent) {
         if (messageQueue != null) {
             try {
-                messageQueue.add(messageEventOld);
+                messageQueue.add(messageEvent);
             } catch (Exception e) {
                 decreaseUserTimeOut();
-                e.printStackTrace();
+                log.error("postMessage exception : {}", e.getMessage());
             }
         }
     }
@@ -68,7 +67,7 @@ public class ChattingUserData {
         }
     }
 
-    public boolean checkTimeout() {
+    public boolean checkTimeOut() {
         if (latestMessageTime != 0) {
             if ((System.currentTimeMillis() - latestMessageTime) > userTimeout) {
                 return true;
@@ -81,27 +80,27 @@ public class ChattingUserData {
         latestMessageTime = System.currentTimeMillis();
     }
 
-    @JsonIgnore
     public ArrayList<MessageEvent> getEvents() {
+        ArrayList<MessageEvent> messageEvents = new ArrayList<>();
         setLatestTime();
-        ArrayList<MessageEvent> messageEventOlds = new ArrayList<>();
+
         if (messageQueue != null) {
             try {
-                MessageEvent messageEventOld = messageQueue.poll(5000, TimeUnit.MILLISECONDS);
-                if (messageEventOld != null && messageQueue != null) {
-                    messageEventOlds.add(messageEventOld);
+                MessageEvent messageEvent = messageQueue.poll(5, TimeUnit.SECONDS);
+                if (messageEvent != null && messageQueue != null) {
+                    messageEvents.add(messageEvent);
                     if (messageQueue.size() != 0) {
                         for (int i = 0; i < messageQueue.size(); i++) {
-                            messageEventOlds.add(messageQueue.take());
+                            messageEvents.add(messageQueue.take());
                         }
                     }
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            } catch (Exception e) {
+                log.error("getEvents() exception : {}", e.getMessage());
             }
         }
 
-        return messageEventOlds;
+        return messageEvents;
     }
 
     public void removeAll() {
@@ -110,6 +109,4 @@ public class ChattingUserData {
             messageQueue = null;
         }
     }
-
-
 }

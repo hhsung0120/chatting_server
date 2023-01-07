@@ -222,7 +222,7 @@ var ChatClient = function() {
 	};
 	
 	var sendDirectMessage = function(toUserIdx, message, callback) {
-		
+
 		var sendData = {
 			programIdx: userInfo.programIdx,
 			fromUserIdx: userInfo.userIdx,
@@ -233,6 +233,9 @@ var ChatClient = function() {
 			message: message,
 			messageEventType: eventType.DIRECT_MSG
 		};
+		console.log(sendData)
+		console.log(userInfo)
+
 		$.ajax({
 			method: "POST",
 			url: '/message/event',

@@ -38,7 +38,7 @@ class ChattingUserDataTest {
 
     @Test
     void finalTest() {
-        final Long test = 1L;
+        final Long test;
         System.out.println(test);
 
         test = 3L;

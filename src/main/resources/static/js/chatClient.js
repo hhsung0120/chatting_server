@@ -238,7 +238,7 @@ var ChatClient = function() {
 
 		$.ajax({
 			method: "POST",
-			url: '/message/event',
+			url: '/message/direct',
 			contentType:'application/json; charset=UTF-8',
 			headers: userInfo,
 			data: JSON.stringify(sendData)

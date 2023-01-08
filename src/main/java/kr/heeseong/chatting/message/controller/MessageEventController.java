@@ -31,4 +31,13 @@ public class MessageEventController {
         log.info("messageEvent : {}", messageEvent);
         return chattingService.sendEvent(internalIdx, messageEvent);
     }
+
+    @PostMapping(value = "/direct")
+    public MessageEvent sendDirectMessage(
+            @RequestHeader("internalIdx") Long internalIdx,
+            @RequestBody MessageEvent messageEvent) throws Exception {
+
+        log.info("sendDirectMessage : {}", internalIdx);
+        return chattingService.sendEvent(internalIdx, messageEvent);
+    }
 }

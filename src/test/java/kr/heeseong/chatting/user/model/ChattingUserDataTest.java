@@ -8,7 +8,7 @@ class ChattingUserDataTest {
 
 
     @Test
-    void QueueTest() throws InterruptedException{
+    void QueueTest() throws InterruptedException {
         ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<>(10);
 
         queue.put("추가1");
@@ -34,6 +34,16 @@ class ChattingUserDataTest {
         queue.take();
         System.out.println(queue);
         queue.take();
+    }
+
+    @Test
+    void finalTest() {
+        final Long test = 1L;
+        System.out.println(test);
+
+        test = 3L;
+
+        
     }
 
 }

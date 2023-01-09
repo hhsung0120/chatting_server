@@ -1,12 +1,14 @@
 package kr.heeseong.chatting.user.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
 public class ChattingUser {
 
-    private long internalIdx;
-    private long userIdx;
+    @Setter
+    private Long internalIdx;
+    private Long userIdx;
     private String userId;
     private String userName;
     private boolean isAdmin;
@@ -14,11 +16,11 @@ public class ChattingUser {
     public ChattingUser() {
     }
 
-    public ChattingUser(Long userIdx, String userId, String userName, boolean isAdmin) {
+    public ChattingUser(Long userIdx, String userId, String userName, boolean isAdmin, Long internalIdx) {
         this.userIdx = userIdx;
         this.userId = userId;
         this.userName = userName;
         this.isAdmin = isAdmin;
-        this.internalIdx = -1;
+        this.internalIdx = internalIdx;
     }
 }

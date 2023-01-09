@@ -343,7 +343,7 @@ public class ChattingService_old {
         }
     }
 
-    private ChattingRoomDataOld createChattingRoom(ChattingRoomOld chattingRoom, boolean log) throws Exception {
+    public ChattingRoomDataOld createChattingRoom(ChattingRoomOld chattingRoom, boolean log) throws Exception {
         ChattingRoomDataOld chattingRoomData;
 
         synchronized (chattingRoomLock) {

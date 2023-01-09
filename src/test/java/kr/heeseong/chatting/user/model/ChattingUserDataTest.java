@@ -39,11 +39,6 @@ class ChattingUserDataTest {
     @Test
     void finalTest() {
         final Long test;
-        System.out.println(test);
-
-        test = 3L;
-
-        
     }
 
 }

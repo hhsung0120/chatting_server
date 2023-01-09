@@ -41,6 +41,21 @@ public class ChattingRoomService {
 
     //private final ChattingMapper chattingMapper;
 
+    public ChattingRoomData createChattingRoom(ChattingRoom chattingRoom) {
+        WeakReference<ChattingRoomData> chatRoomRef = new WeakReference<>(new ChattingRoomData());
+        ChattingRoomData ChattingRoomData = chatRoomRef.get();
+        ChattingRoomData.setChattingRoom(chattingRoom);
+
+        chattingRooms.put(ChattingRoomData.getChattingRoomSeq(), ChattingRoomData);
+        return ChattingRoomData;
+    }
+
+    public Long getChattingRoomSeq(){
+        Long returnValue = chattingRoomSeq;
+        chattingRoomSeq++;
+        return returnValue;
+    }
+
 
     public ChattingRoom enterChattingRoom(ChattingRoom chattingRoom) throws Exception {
 
@@ -156,6 +171,9 @@ public class ChattingRoomService {
             throw e;
         }
 
+        log.info("chattingUserData {}", chattingUserData);
+        log.info("chattingRoom {}", chattingRoom);
+
         if (!chattingRoomData.addUser(chattingUserData.getChattingUser())) {
             throw new UserExistException();
         }
@@ -167,7 +185,7 @@ public class ChattingRoomService {
 
         sendMessageEvent(chattingUserData.getInternalIdx(), messageEvent);
 
-        chattingUserData.setProgramIdx(chattingRoom.getChattingRoomSeq());
+        //chattingUserData.setProgramIdx(chattingRoom.getChattingRoomSeq());
         chattingRoom.setInternalIdx(chattingUserData.getInternalIdx());
 
         //chattingMapper.insertEvent(messageEvent);
@@ -282,7 +300,6 @@ public class ChattingRoomService {
         WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUser));
         ChattingUserData ChattingUserData = userRef.get();
 
-
         chattingUserService.setCattingUsers(chattingUser.getInternalIdx(), ChattingUserData);
 
         return ChattingUserData;
@@ -356,27 +373,29 @@ public class ChattingRoomService {
         }
     }
 
-    private ChattingRoomData createChattingRoom(ChattingRoom chattingRoom) throws Exception {
 
-        if (chattingRooms.get(chattingRoom.getChattingRoomSeq()) != null) {
-            log.error("chatting room exist exception / chattingRoomSeq : {}", chattingRoom.getChattingRoomSeq());
-            throw new ChatRoomExistException();
-        }
 
-        WeakReference<ChattingRoomData> chatRoomRef = new WeakReference<>(new ChattingRoomData());
-        ChattingRoomData ChattingRoomData = chatRoomRef.get();
-        ChattingRoomData.setChattingRoom(chattingRoom);
-
-        chattingRooms.put(ChattingRoomData.getChattingRoomSeq(), ChattingRoomData);
-
-//        if (log) {
-//            MessageEvent messageEvent = EventManager.makeCreateRoomEvent(chattingRoom);
-//            //sendEvent(internalIdx, event);
-//            chattingMapper.insertEvent(messageEvent);
+//    public ChattingRoomData createChattingRoom(ChattingRoom chattingRoom) throws Exception {
+//
+//        if (chattingRooms.get(chattingRoom.getChattingRoomSeq()) != null) {
+//            log.error("chatting room exist exception / chattingRoomSeq : {}", chattingRoom.getChattingRoomSeq());
+//            throw new ChatRoomExistException();
 //        }
-
-        return ChattingRoomData;
-    }
+//
+//        WeakReference<ChattingRoomData> chatRoomRef = new WeakReference<>(new ChattingRoomData());
+//        ChattingRoomData ChattingRoomData = chatRoomRef.get();
+//        ChattingRoomData.setChattingRoom(chattingRoom);
+//
+//        chattingRooms.put(ChattingRoomData.getChattingRoomSeq(), ChattingRoomData);
+//
+////        if (log) {
+////            MessageEvent messageEvent = EventManager.makeCreateRoomEvent(chattingRoom);
+////            //sendEvent(internalIdx, event);
+////            chattingMapper.insertEvent(messageEvent);
+////        }
+//
+//        return ChattingRoomData;
+//    }
 
     private void sendEventToRoom(Long internalIdx, MessageEvent messageEvent, Boolean sendMyself) {
         ChattingRoomData room = chattingRooms.get(messageEvent.getProgramIdx());
@@ -456,6 +475,12 @@ public class ChattingRoomService {
         }
     }
 
+    /**
+     * 채팅 방 체크
+     *
+     * @param roomSeq
+     * @return
+     */
     public ChattingRoomData getChattingRoom(Long roomSeq) {
         return chattingRooms.get(roomSeq);
     }

@@ -1,5 +1,6 @@
 package kr.heeseong.chatting.message.service;
 
+import kr.heeseong.chatting.old.event_enum.MessageEventType;
 import kr.heeseong.chatting.room.model.ChattingRoomData;
 import kr.heeseong.chatting.room.model.MessageEvent;
 import kr.heeseong.chatting.room.service.ChattingRoomService;
@@ -43,6 +44,33 @@ public class MessageEventService {
                     }
                 }
 
+            }
+        }
+    }
+
+    public void sendMessageEvent(Long internalIdx, MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
+
+        if (messageEvent.getMessageEventType() == MessageEventType.ENTER_USER.getValue()) {
+            sendEventToRoom(internalIdx, messageEvent, false, chattingRoomData);
+        } else if (messageEvent.getMessageEventType() == MessageEventType.NORMAL_MSG.getValue()) {
+            //sendMessage(internalIdx, messageEvent);
+        } else if (messageEvent.getMessageEventType() == MessageEventType.DIRECT_MSG.getValue()) {
+            //messageEventService.sendEventToPerson(messageEvent.getToUserIdx(), messageEvent, getChattingRoom(messageEvent.getProgramIdx()));
+            //messageEventService.sendEventToPerson(internalIdx, messageEvent);
+        } else {
+            throw new Exception();
+        }
+    }
+
+    private void sendEventToRoom(Long internalIdx, MessageEvent messageEvent, Boolean sendMyself, ChattingRoomData chattingRoomData) {
+        if (chattingRoomData != null) {
+            for (Long keyIndex : chattingRoomData.getInternalUsers()) {
+                if (sendMyself || (internalIdx != keyIndex)) {
+                    ChattingUserData user = chattingUserService.getChattingUser(keyIndex);
+                    if (user != null) {
+                        user.postMessage(messageEvent);
+                    }
+                }
             }
         }
     }

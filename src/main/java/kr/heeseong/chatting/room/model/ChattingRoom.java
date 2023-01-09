@@ -11,7 +11,7 @@ public class ChattingRoom extends ChattingUser {
 
     //올드 영역
     @Setter
-    private long internalIdx;
+    private Long internalIdx;
     private int programIdx;
     private String name;
     private String description;
@@ -29,6 +29,6 @@ public class ChattingRoom extends ChattingUser {
 
     public ChattingUser getChattingUser() {
         Boolean isAdmin = "admin".equals(super.getUserId());
-        return new ChattingUser(super.getUserIdx(), super.getUserId(), super.getUserName(), isAdmin);
+        return new ChattingUser(super.getUserIdx(), super.getUserId(), super.getUserName(), isAdmin, internalIdx);
     }
 }

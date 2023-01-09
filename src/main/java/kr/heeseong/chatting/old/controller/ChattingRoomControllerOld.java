@@ -25,18 +25,11 @@ public class ChattingRoomControllerOld {
 
     @PostMapping("/enterUser")
     public ChattingRoom enterChatRoom(
-            @RequestHeader("userIdx") long userIdx
+            @RequestHeader("userIdx") Long userIdx
             , @RequestHeader("userId") String userId
             , @RequestHeader("userName") String userName
             , @RequestHeader("isAdmin") boolean isAdmin
             , @RequestBody ChattingRoom chattingRoom) throws Exception {
-
-        log.info("old parameter1 {}", chattingRoom);
-
-        chattingRoom.setUserIdx(userIdx);
-        chattingRoom.setUserId(userId);
-        chattingRoom.setUserName(userName);
-        chattingRoom.setAdmin(isAdmin);
 
         log.info("old parameter2 {}", chattingRoom);
         log.info("old parameter2 {}", chattingRoom.getUserId());

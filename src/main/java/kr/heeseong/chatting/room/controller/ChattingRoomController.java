@@ -1,5 +1,6 @@
 package kr.heeseong.chatting.room.controller;
 
+import kr.heeseong.chatting.event.service.EventService;
 import kr.heeseong.chatting.room.model.ChattingRoom;
 import kr.heeseong.chatting.room.service.ChattingRoomService;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/chatting-room")
 public class ChattingRoomController {
 
+    private final EventService eventService;
     private final ChattingRoomService chattingRoomService;
 
     @PostMapping("/enter-user")
@@ -23,6 +25,6 @@ public class ChattingRoomController {
 
         log.info("enterChatRoom : {}", ChattingRoom);
         log.info("enterChatRoomUser : {}", ChattingRoom.getChattingUser());
-        return chattingRoomService.enterChattingRoom(ChattingRoom);
+        return eventService.enterChattingRoom(ChattingRoom);
     }
 }

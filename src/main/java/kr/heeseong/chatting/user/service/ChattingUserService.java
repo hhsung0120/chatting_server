@@ -1,9 +1,11 @@
 package kr.heeseong.chatting.user.service;
 
+import kr.heeseong.chatting.user.model.ChattingUser;
 import kr.heeseong.chatting.user.model.ChattingUserData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -27,5 +29,13 @@ public class ChattingUserService {
 
     public void chattingUserRemove(Long userSeq) {
         chattingUsers.remove(userSeq);
+    }
+
+    public ChattingUserData setChattingUser(ChattingUser chattingUser) {
+        WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUser));
+        ChattingUserData ChattingUserData = userRef.get();
+
+        setCattingUsers(chattingUser.getInternalIdx(), ChattingUserData);
+        return ChattingUserData;
     }
 }

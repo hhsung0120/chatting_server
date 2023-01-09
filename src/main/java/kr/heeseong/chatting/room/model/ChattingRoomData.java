@@ -109,13 +109,12 @@ public class ChattingRoomData {
         return users.keySet();
     }
 
-    public Boolean addUser(ChattingUser user) {
+    public boolean addUser(ChattingUser user) {
         if (getInternalUsers().contains(user.getInternalIdx())) {
             return false;
         }
 
         users.put(user.getInternalIdx(), user);
-
         return true;
     }
 

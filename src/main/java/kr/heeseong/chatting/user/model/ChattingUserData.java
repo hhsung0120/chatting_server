@@ -3,6 +3,7 @@ package kr.heeseong.chatting.user.model;
 import kr.heeseong.chatting.room.model.MessageEvent;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Getter
+@ToString
 public class ChattingUserData {
 
     private ChattingUser ChattingUser;

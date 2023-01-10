@@ -47,7 +47,6 @@ public class MessageEvent {
         this.message = msg;
     }
 
-    @Builder(builderClassName = "enterRoomEventBuilder", builderMethodName = "enterRoomEventBuilder")
     public MessageEvent(ChattingRoom chattingRoom) {
         this.messageEventType = MessageEventType.ENTER_USER.getValue();
         this.programIdx = chattingRoom.getChattingRoomSeq();

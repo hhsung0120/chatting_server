@@ -33,9 +33,9 @@ public class ChattingUserService {
 
     public ChattingUserData setChattingUser(ChattingUser chattingUser) {
         WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUser));
-        ChattingUserData ChattingUserData = userRef.get();
+        ChattingUserData chattingUserData = userRef.get();
 
-        setCattingUsers(chattingUser.getInternalIdx(), ChattingUserData);
-        return ChattingUserData;
+        chattingUsers.put(chattingUser.getInternalIdx(), chattingUserData);
+        return chattingUserData;
     }
 }

@@ -20,9 +20,9 @@ public class ChattingUserData {
     @Setter
     private Long programIdx;
     private ArrayBlockingQueue<MessageEvent> messageQueue;
-    private long latestMessageTime;
-    private long DEFAULT_MESSAGE_TIMEOUT = 60 * 1000 * 2; // 2 minutes
-    private long userTimeout = DEFAULT_MESSAGE_TIMEOUT;
+    private Long latestMessageTime;
+    private Long DEFAULT_MESSAGE_TIMEOUT = 60 * 1000 * 2L; // 2 minutes
+    private Long userTimeout = DEFAULT_MESSAGE_TIMEOUT;
 
     public ChattingUserData(ChattingUser ChattingUser) {
         this.ChattingUser = ChattingUser;
@@ -65,7 +65,7 @@ public class ChattingUserData {
     private void decreaseUserTimeOut() {
         userTimeout = userTimeout / 2;
         if (userTimeout < 60000) {
-            userTimeout = 60000;
+            userTimeout = 60000L;
         }
     }
 

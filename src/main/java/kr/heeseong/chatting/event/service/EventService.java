@@ -22,6 +22,7 @@ public class EventService {
     private final MessageEventService messageEventService;
 
     public ChattingRoom enterChattingRoom(ChattingRoom chattingRoom) throws Exception {
+        chattingRoom.setInternalIdx(chattingRoomService.getChattingRoomSeq());
 
         //채팅 방 존재 확인
         ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(chattingRoom.getChattingRoomSeq());
@@ -32,7 +33,6 @@ public class EventService {
         //채팅방 유저 셋팅
         ChattingUserData chattingUserData;
         try {
-            chattingRoom.setInternalIdx(chattingRoomService.getChattingRoomSeq());
             chattingUserData = chattingUserService.setChattingUser(chattingRoom.getChattingUser());
         } catch (Exception e) {
             log.error("setChattingUser exception : {}", e.getMessage());
@@ -44,11 +44,7 @@ public class EventService {
             throw new UserExistException();
         }
 
-        MessageEvent messageEvent =
-                MessageEvent.enterRoomEventBuilder()
-                        .chattingRoom(chattingRoom)
-                        .build();
-
+        MessageEvent messageEvent = new MessageEvent(chattingRoom);
         messageEventService.sendMessageEvent(chattingUserData.getInternalIdx(), messageEvent, chattingRoomData);
 
         chattingRoom.setInternalIdx(chattingUserData.getInternalIdx());

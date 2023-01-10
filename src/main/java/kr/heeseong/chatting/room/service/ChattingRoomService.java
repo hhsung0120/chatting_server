@@ -178,11 +178,7 @@ public class ChattingRoomService {
             throw new UserExistException();
         }
 
-        MessageEvent messageEvent =
-                MessageEvent.enterRoomEventBuilder()
-                        .chattingRoom(chattingRoom)
-                        .build();
-
+        MessageEvent messageEvent = new MessageEvent(chattingRoom);
         sendMessageEvent(chattingUserData.getInternalIdx(), messageEvent);
 
         //chattingUserData.setProgramIdx(chattingRoom.getChattingRoomSeq());

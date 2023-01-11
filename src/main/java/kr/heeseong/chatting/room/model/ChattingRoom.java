@@ -31,4 +31,8 @@ public class ChattingRoom extends ChattingUser {
         Boolean isAdmin = "admin".equals(super.getUserId());
         return new ChattingUser(super.getUserIdx(), super.getUserId(), super.getUserName(), isAdmin, internalIdx);
     }
+
+    public Long getInternalIdx() {
+        return getUserIdx();
+    }
 }

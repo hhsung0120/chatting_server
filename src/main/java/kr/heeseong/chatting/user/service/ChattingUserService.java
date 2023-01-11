@@ -35,7 +35,7 @@ public class ChattingUserService {
         WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUser));
         ChattingUserData chattingUserData = userRef.get();
 
-        chattingUsers.put(chattingUser.getInternalIdx(), chattingUserData);
+        chattingUsers.put(chattingUser.getUserIdx(), chattingUserData);
         return chattingUserData;
     }
 }

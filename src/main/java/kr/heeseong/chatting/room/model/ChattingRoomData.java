@@ -110,11 +110,11 @@ public class ChattingRoomData {
     }
 
     public boolean addUser(ChattingUser user) {
-        if (getInternalUsers().contains(user.getInternalIdx())) {
+        if (getInternalUsers().contains(user.getUserIdx())) {
             return false;
         }
 
-        users.put(user.getInternalIdx(), user);
+        users.put(user.getUserIdx(), user);
         return true;
     }
 

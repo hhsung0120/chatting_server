@@ -22,7 +22,7 @@ public class EventService {
     private final MessageEventService messageEventService;
 
     public ChattingRoom enterChattingRoom(ChattingRoom chattingRoom) throws Exception {
-        chattingRoom.setInternalIdx(chattingRoomService.getChattingRoomSeq());
+        //chattingRoom.setInternalIdx(chattingRoom.getUserIdx());
 
         //채팅 방 존재 확인
         ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(chattingRoom.getChattingRoomSeq());
@@ -45,10 +45,8 @@ public class EventService {
         }
 
         MessageEvent messageEvent = new MessageEvent(chattingRoom);
-        messageEventService.sendMessageEvent(chattingUserData.getInternalIdx(), messageEvent, chattingRoomData);
+        messageEventService.sendMessageEvent(chattingUserData.getUserIdx(), messageEvent, chattingRoomData);
 
-        chattingRoom.setInternalIdx(chattingUserData.getInternalIdx());
-        //chattingRoom.setInternalIdx(chattingRoom.getInternalIdx());
 
         return chattingRoom;
     }

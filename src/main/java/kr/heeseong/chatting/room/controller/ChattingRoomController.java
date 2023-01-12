@@ -24,7 +24,6 @@ public class ChattingRoomController {
             @RequestBody ChattingRoom ChattingRoom) throws Exception {
 
         log.info("enterChatRoom : {}", ChattingRoom);
-        log.info("enterChatRoomUser : {}", ChattingRoom.getChattingUser());
         return eventService.enterChattingRoom(ChattingRoom);
     }
 }

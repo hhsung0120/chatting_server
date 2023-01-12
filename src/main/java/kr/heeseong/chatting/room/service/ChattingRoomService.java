@@ -254,15 +254,19 @@ public class ChattingRoomService {
         }
     }
 
-    private void sendMessageEvent(Long internalIdx, MessageEvent messageEvent) throws Exception {
-
+    private void sendMessageEvent(Long userIdx, MessageEvent messageEvent) throws Exception {
         if (messageEvent.getMessageEventType() == MessageEventType.ENTER_USER.getValue()) {
-            sendEventToRoom(internalIdx, messageEvent, false);
+            sendEventToRoom(userIdx, messageEvent, false);
         } else if (messageEvent.getMessageEventType() == MessageEventType.NORMAL_MSG.getValue()) {
-            sendMessage(internalIdx, messageEvent);
+            sendMessage(userIdx, messageEvent);
         } else if (messageEvent.getMessageEventType() == MessageEventType.DIRECT_MSG.getValue()) {
             messageEventService.sendEventToPerson(messageEvent.getToUserIdx(), messageEvent, getChattingRoom(messageEvent.getProgramIdx()));
-            messageEventService.sendEventToPerson(internalIdx, messageEvent);
+            messageEventService.sendEventToPerson(userIdx, messageEvent);
+        } else if (messageEvent.getMessageEventType() == MessageEventType.APPROVED_MSG.getValue()) {
+            messageEventService.sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, getChattingRoom(messageEvent.getProgramIdx()));
+            MessageEvent newMessageEvent = EventManager.cloneEvent(messageEvent);
+            newMessageEvent.setMessageEventType(MessageEventType.NORMAL_MSG.getValue());
+            sendEventToRoom(userIdx, newMessageEvent);
         } else {
             throw new Exception();
         }

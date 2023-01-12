@@ -1,9 +1,10 @@
 package kr.heeseong.chatting.message.service;
 
+import kr.heeseong.chatting.old.event_enum.ChattingRoomType;
 import kr.heeseong.chatting.old.event_enum.MessageEventType;
+import kr.heeseong.chatting.old.exceptions.BadArgumentException;
 import kr.heeseong.chatting.room.model.ChattingRoomData;
 import kr.heeseong.chatting.room.model.MessageEvent;
-import kr.heeseong.chatting.room.service.ChattingRoomService;
 import kr.heeseong.chatting.user.model.ChattingUserData;
 import kr.heeseong.chatting.user.service.ChattingUserService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,15 @@ import org.springframework.stereotype.Service;
 public class MessageEventService {
 
     private final ChattingUserService chattingUserService;
+
+    //2023-01-13 정리
+    public void sendGeneralMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws BadArgumentException {
+        if (chattingRoomData.getChattingRoomType() == ChattingRoomType.MANY_TO_MANY.getValue()) {
+            sendEventToRoom(messageEvent.getFromUserIdx(), messageEvent, true, chattingRoomData);
+        } else {
+            throw new BadArgumentException();
+        }
+    }
 
     public void sendEventToPerson(Long userIdx, MessageEvent messageEvent, ChattingRoomData room) {
         if (room != null) {
@@ -74,4 +84,5 @@ public class MessageEventService {
             }
         }
     }
+
 }

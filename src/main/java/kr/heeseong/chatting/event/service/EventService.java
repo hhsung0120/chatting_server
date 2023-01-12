@@ -1,6 +1,8 @@
 package kr.heeseong.chatting.event.service;
 
 import kr.heeseong.chatting.message.service.MessageEventService;
+import kr.heeseong.chatting.old.exceptions.BadArgumentException;
+import kr.heeseong.chatting.old.exceptions.ChatRoomNotExistException;
 import kr.heeseong.chatting.old.exceptions.UserExistException;
 import kr.heeseong.chatting.room.model.ChattingRoom;
 import kr.heeseong.chatting.room.model.ChattingRoomData;
@@ -47,7 +49,18 @@ public class EventService {
         MessageEvent messageEvent = new MessageEvent(chattingRoom);
         messageEventService.sendMessageEvent(chattingUserData.getUserIdx(), messageEvent, chattingRoomData);
 
-
         return chattingRoom;
+    }
+
+    public MessageEvent sendGeneralMessage(MessageEvent messageEvent) throws Exception {
+        //채팅 방 존재 확인
+        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(messageEvent.getChattingRoomSeq());
+        if (chattingRoomData == null) {
+            throw new ChatRoomNotExistException();
+        }
+
+        messageEventService.sendGeneralMessage(messageEvent, chattingRoomData);
+
+        return messageEvent;
     }
 }

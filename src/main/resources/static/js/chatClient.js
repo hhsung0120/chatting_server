@@ -50,7 +50,8 @@ var ChatClient = function() {
 				headers : userInfo,
 				data : JSON.stringify(sendData)
 			}).done(function(data){
-				userInfo.internalIdx = data.internalIdx;
+				console.log(data)
+				userInfo.internalIdx = data.userIdx;
 				userInfo.programIdx = data.programIdx;
 				if (callback) {
 					callback(data);
@@ -67,7 +68,7 @@ var ChatClient = function() {
 			});
 		}
 	};
-	
+
 	var exitChatRoom = function(async, callback) {
 		if (typeof async === 'undefined') {
 			async = false;
@@ -84,20 +85,20 @@ var ChatClient = function() {
 				if (callback) {
 					callback(data);
 				}
-			});				
+			});
 		}
 	};
-	
+
 	var updateChatRoom = function (updateInfo, callback) {
 		updateInfo.programIdx = userInfo.programIdx;
-		
+
 		if (!updateInfo.type) {
 			updateInfo.type = -1;
 		}
 		if (!updateInfo.adminIdx) {
 			updateInfo.adminIdx = -1;
 		}
-		
+
 		$.ajax({
 			method: "PUT",
 			url: '/chatRoom',
@@ -122,12 +123,10 @@ var ChatClient = function() {
 				'programIdx' : userInfo.programIdx
 			},
 		}).done(function(data){
-			if (callback) {
-				callback(data);
-			}
+			callback(data);
 		});
 	};
-	
+
 	var getChatRoomList = function(callback) {
 		//alert("getChatRoomList");
 		$.ajax({
@@ -142,9 +141,9 @@ var ChatClient = function() {
 			}
 		});
 	};
-	
+
 	var getNewEvent = function(callback) {
-		console.log('getNewEvent : start call');
+
 		if (userInfo.userIdx !== -1 && userInfo.programIdx !== -1) {
 			$.ajax({
 				method: "GET",
@@ -153,7 +152,6 @@ var ChatClient = function() {
 				cache: false,
 				headers: userInfo
 			}).done(function(data){
-				console.log(data)
 				if (callback) {
 					callback(data);
 				}
@@ -167,8 +165,11 @@ var ChatClient = function() {
 			});
 		};
 	};
-	
+
 	var sendMessage = function(message, callback) {
+		console.log("sendMessage")
+		console.log(userInfo)
+		console.log("sendMessage")
 		var sendData = {
 			programIdx : userInfo.programIdx
 			, fromUserIdx : userInfo.userIdx
@@ -176,11 +177,15 @@ var ChatClient = function() {
 			, userName : userInfo.userName
 			, message : message
 			, messageEventType : eventType.NORMAL_MSG
+
+            //나에게 필요한 값
+			, chattingRoomSeq : userInfo.programIdx
 		};
-		console.log(sendData);
+
 		$.ajax({
 			method: "POST",
-			url: '/message/event',
+			// url: '/message/event',
+			url: '/message/general',
 			contentType:'application/json; charset=UTF-8',
 			headers: userInfo,
 			data: JSON.stringify(sendData)
@@ -195,9 +200,9 @@ var ChatClient = function() {
 				alert("참여중인 방송이 있습니다.");
 				location.href ="/chat/overlapUser";
 			}
-		});			
+		});
 	};
-	
+
 	var sendAdminMessage = function(message, callback) {
 		var sendData = {
 				programIdx: userInfo.programIdx,
@@ -207,7 +212,7 @@ var ChatClient = function() {
 				message: message,
 				messageEventType: eventType.ADMIN_MSG
 			};
-		
+
 			$.ajax({
 				method: "POST",
 				url: '/message/event',
@@ -218,9 +223,9 @@ var ChatClient = function() {
 				if (callback) {
 					callback(data);
 				}
-			});		
+			});
 	};
-	
+
 	var sendDirectMessage = function(toUserIdx, message, callback) {
 
 		var sendData = {
@@ -233,9 +238,6 @@ var ChatClient = function() {
 			message: message,
 			messageEventType: eventType.DIRECT_MSG
 		};
-		console.log(sendData)
-		console.log(userInfo)
-
 		$.ajax({
 			method: "POST",
 			url: '/message/direct',
@@ -246,16 +248,15 @@ var ChatClient = function() {
 			if (callback) {
 				callback(data);
 			}
-		});		
+		});
 	};
-	
+
 	var addBlackList = function(blackUser, callback) {
 		var sendData = {
 			programIdx: userInfo.programIdx,
 			userIdx : blackUser,
 		};
-		console.log(sendData)
-		console.log(userInfo)
+
 		$.ajax({
 			method: "POST",
 			url: '/chattingRoom/blacklist',
@@ -266,16 +267,15 @@ var ChatClient = function() {
 			if (callback) {
 				callback(data);
 			}
-		});			
+		});
 	};
-	
+
 	var removeBlackList = function(blackUser, callback) {
 		var sendData = {
 			programIdx: userInfo.programIdx,
 			userIdx : blackUser,
 		};
-		console.log(sendData)
-		console.log(userInfo)
+
 		$.ajax({
 			method: "DELETE",
 			url: '/chattingRoom/blacklist',
@@ -286,7 +286,7 @@ var ChatClient = function() {
 			if (callback) {
 				callback(data);
 			}
-		});			
+		});
 	};
 	var getBlackList = function(blackUser, callback) {
 		$.ajax({
@@ -298,9 +298,9 @@ var ChatClient = function() {
 			if (callback) {
 				callback(data);
 			}
-		});			
+		});
 	};
-	
+
 	var approveMessage = function(orgUserIdx, orgUserId, orgUserName, message, callback) {
 		var sendData = {
 			programIdx: userInfo.programIdx,
@@ -310,7 +310,6 @@ var ChatClient = function() {
 			message: message,
 			messageEventType: eventType.APPROVED_MSG
 		};
-		console.log(sendData);
 		$.ajax({
 			method: "POST",
 			url: '/message/event',
@@ -321,9 +320,9 @@ var ChatClient = function() {
 			if (callback) {
 				callback(data);
 			}
-		});			
+		});
 	};
-	
+
 	var rejectMessage = function(orgUserIdx, orgUserId, orgUserName, message, callback) {
 		var sendData = {
 			programIdx: userInfo.programIdx,
@@ -333,7 +332,7 @@ var ChatClient = function() {
 			message: message,
 			messageEventType: eventType.REJECTED_MSG
 		};
-		
+
 		$.ajax({
 			method: "POST",
 			url: '/message/event',
@@ -344,7 +343,7 @@ var ChatClient = function() {
 			if (callback) {
 				callback(data);
 			}
-		});			
+		});
 	};
 
 	return {

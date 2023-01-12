@@ -125,6 +125,7 @@ var getUserList = function() {
 	ChatClient.getUserList(function(data) {
 		$('#user-list').empty();
 		if (data && data.length !== 0) {
+			console.log(data.length);
 			data.forEach (function(user) {
 				addUserToUserList(user.userIdx, user.userId, user.userName);
 			});
@@ -173,7 +174,6 @@ var processEvents = function(events) {
 							'<div class="fr"></div></div><div class="cont"><span class="bg_top"></span><p class="txt">'+event.message+'</p>'+
 							'<span class="bg_bottom"></span></div></li>');
 					}else if(event.fromUserIdx!=userInfo.userMessageIdx && event.userName != 'admin'){
-						console.log(event);
 						$('#chat-messages').append('<li class="me"><p class="name"><div class="clear">'+event.userName
 							+'<div class="fr">'+
 							'</div></div></p><div class="cont"><span class="bg_top"></span><p class="txt">'+event.message+'</p><span class="bg_bottom"></span>'+

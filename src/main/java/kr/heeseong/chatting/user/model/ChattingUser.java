@@ -13,7 +13,14 @@ public class ChattingUser {
     private String userName;
     private boolean isAdmin;
 
+    private Long chattingRoomSeq;
+
     public ChattingUser() {
+    }
+
+    public ChattingUser(Long chattingRoomSeq, Long userIdx) {
+        this.chattingRoomSeq = chattingRoomSeq;
+        this.userIdx = userIdx;
     }
 
     public ChattingUser(Long userIdx, String userId, String userName, boolean isAdmin, Long internalIdx) {

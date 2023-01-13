@@ -118,7 +118,7 @@ public class ChattingRoomData {
         return true;
     }
 
-    public int removeUser(long internalIdx) {
+    public int removeUser(Long internalIdx) {
         if (getInternalUsers().contains(internalIdx) == false) {
             return -1;
         }
@@ -130,13 +130,13 @@ public class ChattingRoomData {
         return 0;
     }
 
-    public void addBlackList(long userIdx) {
+    public void addBlackList(Long userIdx) {
         synchronized (blackLock) {
             blackList.add(userIdx);
         }
     }
 
-    public boolean isBlackList(long userIdx) {
+    public boolean isBlackList(Long userIdx) {
         return blackList.contains(userIdx);
     }
 
@@ -149,7 +149,7 @@ public class ChattingRoomData {
         return (Long[]) blackList.toArray();
     }
 
-    public void removeBlackList(long userIdx) {
+    public void removeBlackList(Long userIdx) {
         synchronized (blackLock) {
             blackList.remove(userIdx);
         }

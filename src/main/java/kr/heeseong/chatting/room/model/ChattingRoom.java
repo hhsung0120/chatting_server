@@ -32,6 +32,9 @@ public class ChattingRoom extends ChattingUser {
         return new ChattingUser(super.getUserIdx(), super.getUserId(), super.getUserName(), isAdmin, internalIdx);
     }
 
+    public ChattingRoom() {
+    }
+
     public Long getInternalIdx() {
         return getUserIdx();
     }

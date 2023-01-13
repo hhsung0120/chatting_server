@@ -1,6 +1,6 @@
 package kr.heeseong.chatting.room.service;
 
-import kr.heeseong.chatting.message.service.MessageEventService;
+import kr.heeseong.chatting.message.service.MessageService;
 import kr.heeseong.chatting.old.event_enum.ChattingRoomType;
 import kr.heeseong.chatting.old.event_enum.MessageEventType;
 import kr.heeseong.chatting.old.exceptions.*;
@@ -34,7 +34,7 @@ public class ChattingRoomService {
 
     private final ChattingUserService chattingUserService;
 
-    private final MessageEventService messageEventService;
+    private final MessageService messageService;
 //    //채팅 유저
 //    private ConcurrentHashMap<Long, ChattingUserData> chattingUsers = new ConcurrentHashMap<>();
 
@@ -124,15 +124,15 @@ public class ChattingRoomService {
     }
 
 
-    public void addBlackList(long internalIdx, Long userIdx, Long programIdx, long blackUserIdx) throws Exception {
+    public void addBlackList(Long internalIdx, Long userIdx, Long programIdx, Long blackUserIdx) throws Exception {
         //TODO 메모리에 담는 구조임 현재, 디비에도 담고 꺼낼 수 있도록 개선 해야함
         this.addBlackList(internalIdx, programIdx, blackUserIdx);
 
-        MessageEvent roomMessageEvent = new MessageEvent(MessageEventType.ADD_BLACKLIST.getValue(), programIdx, blackUserIdx, userIdx, "", "", "");
+        //MessageEvent roomMessageEvent = new MessageEvent(MessageEventType.ADD_BLACKLIST.getValue(), programIdx, blackUserIdx, userIdx, "", "", "");
         //chattingMapper.insertEvent(roomMessageEvent);
     }
 
-    public void removeBlackList(long internalIdx, Long userIdx, Long programIdx, long blackUserIdx) throws Exception {
+    public void removeBlackList(Long internalIdx, Long userIdx, Long programIdx, Long blackUserIdx) throws Exception {
         this.removeBlackList(internalIdx, programIdx, blackUserIdx);
         MessageEvent messageEventOld = new MessageEvent(MessageEventType.REMOVE_BLACKLIST.getValue(), programIdx, blackUserIdx, userIdx, "", "", "");
         //chattingMapper.insertEvent(messageEventOld);
@@ -227,7 +227,7 @@ public class ChattingRoomService {
         return chatRoomManager.getBlackListArray();
     }
 
-    private void addBlackList(long internalIdx, Long programIdx, long blackUser) throws Exception {
+    private void addBlackList(Long internalIdx, Long programIdx, long blackUser) throws Exception {
         checkAdmin(internalIdx);
 
         if (programIdx != -1) {
@@ -260,10 +260,10 @@ public class ChattingRoomService {
         } else if (messageEvent.getMessageEventType() == MessageEventType.NORMAL_MSG.getValue()) {
             sendMessage(userIdx, messageEvent);
         } else if (messageEvent.getMessageEventType() == MessageEventType.DIRECT_MSG.getValue()) {
-            messageEventService.sendEventToPerson(messageEvent.getToUserIdx(), messageEvent, getChattingRoom(messageEvent.getProgramIdx()));
-            messageEventService.sendEventToPerson(userIdx, messageEvent);
+            messageService.sendEventToPerson(messageEvent.getToUserIdx(), messageEvent, getChattingRoom(messageEvent.getProgramIdx()));
+            messageService.sendEventToPerson(userIdx, messageEvent);
         } else if (messageEvent.getMessageEventType() == MessageEventType.APPROVED_MSG.getValue()) {
-            messageEventService.sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, getChattingRoom(messageEvent.getProgramIdx()));
+            messageService.sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, getChattingRoom(messageEvent.getProgramIdx()));
             MessageEvent newMessageEvent = EventManager.cloneEvent(messageEvent);
             newMessageEvent.setMessageEventType(MessageEventType.NORMAL_MSG.getValue());
             sendEventToRoom(userIdx, newMessageEvent);
@@ -365,7 +365,7 @@ public class ChattingRoomService {
         //chattingMapper.insertEvent(messageEventOld);
     }
 
-    private void checkAdmin(long internalIdx) throws Exception {
+    public void checkAdmin(Long internalIdx) throws Exception {
         ChattingUserData user = chattingUserService.getChattingUser(internalIdx);
         log.info("checkAdmin {}", user);
         if (user == null || !user.isAdmin()) {
@@ -423,7 +423,7 @@ public class ChattingRoomService {
 
             if (room.isBlackList(messageEvent.getFromUserIdx())) {
                 messageEvent.setMessageEventType(MessageEventType.BLOCKED_MSG.getValue());
-                messageEventService.sendEventToPerson(internalIdx, messageEvent);
+                messageService.sendEventToPerson(internalIdx, messageEvent);
                 return;
             }
 
@@ -435,8 +435,8 @@ public class ChattingRoomService {
                 if (user != null && user.isAdmin()) {
                     sendEventToRoom(internalIdx, messageEvent);
                 } else {
-                    messageEventService.sendEventToPerson(room.getAdminIdx(), messageEvent, getChattingRoom(room.getChattingRoomSeq()));
-                    messageEventService.sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, getChattingRoom(room.getChattingRoomSeq()));
+                    messageService.sendEventToPerson(room.getAdminIdx(), messageEvent, getChattingRoom(room.getChattingRoomSeq()));
+                    messageService.sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, getChattingRoom(room.getChattingRoomSeq()));
                 }
 
             } else if (room.getChattingRoomType() == ChattingRoomType.APPROVAL.getValue()) {
@@ -447,10 +447,10 @@ public class ChattingRoomService {
                 } else {
                     // normal user : send approval request to admin
                     messageEvent.setMessageEventType(MessageEventType.REQ_APPROVAL_MSG.getValue());
-                    messageEventService.sendEventToPerson(room.getAdminIdx(), messageEvent, getChattingRoom(room.getChattingRoomSeq()));
+                    messageService.sendEventToPerson(room.getAdminIdx(), messageEvent, getChattingRoom(room.getChattingRoomSeq()));
                     MessageEvent waitMessageEventOld = EventManager.cloneEvent(messageEvent);
                     waitMessageEventOld.setMessageEventType(MessageEventType.WAIT_APPROVAL_MSG.getValue());
-                    messageEventService.sendEventToPerson(waitMessageEventOld.getFromUserIdx(), waitMessageEventOld, getChattingRoom(waitMessageEventOld.getProgramIdx()));
+                    messageService.sendEventToPerson(waitMessageEventOld.getFromUserIdx(), waitMessageEventOld, getChattingRoom(waitMessageEventOld.getProgramIdx()));
                 }
             }
         } else {

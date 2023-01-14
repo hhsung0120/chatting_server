@@ -1,7 +1,7 @@
 var ChatClient = function () {
     var userInfo = {
         internalIdx: -1
-        , programIdx: -1
+        , chattingRoomSeq: -1
         , userIdx: -1
         , userId: ''
         , userName: ''
@@ -22,10 +22,9 @@ var ChatClient = function () {
         return userInfo.userIdx;
     };
 
-    var enterChatRoom = function (programIdx, adminIdx, name, description, type, callback) {
-        if (!userInfo || userInfo.programIdx === -1) {
+    var createChattingRoom = function (chattingRoomSeq, adminIdx, name, description, type, callback) {
+        if (!userInfo || userInfo.chattingRoomSeq === -1) {
             var sendData = {
-                programIdx: programIdx,
                 adminIdx: adminIdx,
 
                 //나에게 필요한 값
@@ -35,7 +34,53 @@ var ChatClient = function () {
                 userId: userInfo.userId,
                 userIdx: userInfo.userIdx,
                 userName: userInfo.userName,
-                chattingRoomSeq: programIdx,
+                chattingRoomSeq: chattingRoomSeq,
+
+                //고정 값
+                password: 1234,
+                categorySeq: 1
+            };
+
+            $.ajax({
+                method: "POST",
+                //url : '/chattingRoom/enterUser',
+                url: '/chatting-room/create',
+                contentType: 'application/json; charset=UTF-8',
+                //headers: userInfo,
+                data: JSON.stringify(sendData)
+            }).done(function (data) {
+                console.log(data)
+                userInfo.internalIdx = data.userIdx;
+                userInfo.chattingRoomSeq = data.chattingRoomSeq;
+                if (callback) {
+                    callback(data);
+                }
+            }).fail(function (data) {
+                var keys = Object.keys(data);
+                var obj = JSON.parse(data[keys[18]]);
+                if (obj.exception === "server.chat.exceptions.UserExistException" && obj.error === "Bad Request") {
+                    alert("참여중인 방송이 있습니다.");
+                    location.href = "/chat/overlapUser";
+                } else {
+                    callback(data);
+                }
+            });
+        }
+    };
+
+    var enterChatRoom = function (chattingRoomSeq, adminIdx, name, description, type, callback) {
+        if (!userInfo || userInfo.chattingRoomSeq === -1) {
+            var sendData = {
+                adminIdx: adminIdx,
+
+                //나에게 필요한 값
+                name: name,
+                description: description,
+                roomType: type,
+                userId: userInfo.userId,
+                userIdx: userInfo.userIdx,
+                userName: userInfo.userName,
+                chattingRoomSeq: chattingRoomSeq,
 
                 //고정 값
                 password: 1234,
@@ -47,12 +92,12 @@ var ChatClient = function () {
                 //url : '/chattingRoom/enterUser',
                 url: '/chatting-room/enter-user',
                 contentType: 'application/json; charset=UTF-8',
-                headers: userInfo,
+                //headers: userInfo,
                 data: JSON.stringify(sendData)
             }).done(function (data) {
                 console.log(data)
                 userInfo.internalIdx = data.userIdx;
-                userInfo.programIdx = data.programIdx;
+                userInfo.chattingRoomSeq = data.chattingRoomSeq;
                 if (callback) {
                     callback(data);
                 }
@@ -73,7 +118,7 @@ var ChatClient = function () {
         if (typeof async === 'undefined') {
             async = false;
         }
-        if (userInfo.programIdx !== -1) {
+        if (userInfo.chattingRoomSeq !== -1) {
             $.ajax({
                 method: "DELETE",
                 url: '/chattingRoom/users',
@@ -81,7 +126,7 @@ var ChatClient = function () {
                 async: async,
                 headers: userInfo
             }).done(function (data) {
-                userInfo.programIdx = -1;
+                userInfo.chattingRoomSeq = -1;
                 if (callback) {
                     callback(data);
                 }
@@ -120,7 +165,7 @@ var ChatClient = function () {
             contentType: 'application/json; charset=UTF-8',
             cache: false, //새로 추가 16.10.04  IE에서 기존 유저 새로고침 할 시 나감 처리 및 새로운 유저 입장 처리 해주기 위해 캐쉬 false;
             data: {
-                'programIdx': userInfo.programIdx
+                'programIdx': userInfo.chattingRoomSeq
             },
         }).done(function (data) {
             callback(data);
@@ -135,7 +180,6 @@ var ChatClient = function () {
             contentType: 'application/json; charset=UTF-8',
             headers: userInfo,
         }).done(function (data) {
-            //alert("getChatRoomList done" + userInfo.programIdx);
             if (callback) {
                 callback(data);
             }
@@ -144,7 +188,7 @@ var ChatClient = function () {
 
     var getNewEvent = function (callback) {
 
-        if (userInfo.userIdx !== -1 && userInfo.programIdx !== -1) {
+        if (userInfo.userIdx !== -1 && userInfo.chattingRoomSeq !== -1) {
             $.ajax({
                 method: "GET",
                 url: '/message/event',
@@ -155,7 +199,7 @@ var ChatClient = function () {
                 if (callback) {
                     callback(data);
                 }
-                if (userInfo && typeof userInfo.userIdx !== 'undefined' && userInfo.userIdx !== -1 && userInfo.programIdx !== -1) {
+                if (userInfo && typeof userInfo.userIdx !== 'undefined' && userInfo.userIdx !== -1 && userInfo.chattingRoomSeq !== -1) {
                     getNewEvent(callback);
                 }
             }).fail(function () {
@@ -169,14 +213,13 @@ var ChatClient = function () {
 
     var sendMessage = function (message, callback) {
         var sendData = {
-            programIdx: userInfo.programIdx
-            , fromUserIdx: userInfo.userIdx
+           fromUserIdx: userInfo.userIdx
             , userId: userInfo.userId
             , userName: userInfo.userName
             , message: message
 
             //나에게 필요한 값
-            , chattingRoomSeq: userInfo.programIdx
+            , chattingRoomSeq: userInfo.chattingRoomSeq
         };
 
         $.ajax({
@@ -201,14 +244,13 @@ var ChatClient = function () {
 
     var sendAdminMessage = function (message, callback) {
         var sendData = {
-            programIdx: userInfo.programIdx,
             fromUserIdx: userInfo.userIdx,
             userId: userInfo.userId,
             name: userInfo.userName,
             message: message
 
             //나에게 필요한 값
-            , chattingRoomSeq: userInfo.programIdx
+            , chattingRoomSeq: userInfo.chattingRoomSeq
         };
 
         $.ajax({
@@ -227,7 +269,6 @@ var ChatClient = function () {
     var sendDirectMessage = function (toUserIdx, message, callback) {
 
         var sendData = {
-            programIdx: userInfo.programIdx,
             fromUserIdx: userInfo.userIdx,
             userId: userInfo.userId,
             name: userInfo.userName,
@@ -236,7 +277,7 @@ var ChatClient = function () {
             message: message
 
             //나에게 필요한 값
-            , chattingRoomSeq: userInfo.programIdx
+            , chattingRoomSeq: userInfo.chattingRoomSeq
         };
         $.ajax({
             method: "POST",
@@ -253,10 +294,8 @@ var ChatClient = function () {
 
     var addBlackList = function (blackUser, callback) {
         var sendData = {
-            programIdx: userInfo.programIdx,
             userIdx: blackUser,
-
-            chattingRoomSeq : userInfo.programIdx
+            chattingRoomSeq : userInfo.chattingRoomSeq
             , toUserIdx: blackUser
             , fromUserIdx : userInfo.userIdx
         };
@@ -277,10 +316,8 @@ var ChatClient = function () {
 
     var removeBlackList = function (blackUser, callback) {
         var sendData = {
-            programIdx: userInfo.programIdx,
             userIdx: blackUser,
-
-            chattingRoomSeq : userInfo.programIdx
+            chattingRoomSeq : userInfo.chattingRoomSeq
             , toUserIdx: blackUser
             , fromUserIdx : userInfo.userIdx
         };
@@ -314,14 +351,13 @@ var ChatClient = function () {
 
     var approveMessage = function (orgUserIdx, orgUserId, orgUserName, message, callback) {
         var sendData = {
-            programIdx: userInfo.programIdx,
             fromUserIdx: orgUserIdx,
             userId: orgUserId,
             name: orgUserName,
             message: message
 
             //나에게 필요한 값
-            , chattingRoomSeq: userInfo.programIdx
+            , chattingRoomSeq: userInfo.chattingRoomSeq
         };
         $.ajax({
             method: "POST",
@@ -338,14 +374,13 @@ var ChatClient = function () {
 
     var rejectMessage = function (orgUserIdx, orgUserId, orgUserName, message, callback) {
         var sendData = {
-            programIdx: userInfo.programIdx,
             fromUserIdx: orgUserIdx,
             userId: orgUserId,
             name: orgUserName,
             message: message
 
             //나에게 필요한 값
-            , chattingRoomSeq: userInfo.programIdx
+            , chattingRoomSeq: userInfo.chattingRoomSeq
         };
 
         $.ajax({
@@ -364,6 +399,7 @@ var ChatClient = function () {
     return {
         getUserIdx: getUserIdx
         , setUserInfo: setUserInfo
+        , createChattingRoom: createChattingRoom
         , enterChatRoom: enterChatRoom
         , exitChatRoom: exitChatRoom
         , updateChatRoom: updateChatRoom

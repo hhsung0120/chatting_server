@@ -12,7 +12,6 @@ public class ChattingRoom extends ChattingUser {
     //올드 영역
     @Setter
     private Long internalIdx;
-    private int programIdx;
     private String name;
     private String description;
     private int roomType; //

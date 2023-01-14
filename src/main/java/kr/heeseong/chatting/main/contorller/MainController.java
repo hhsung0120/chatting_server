@@ -18,4 +18,10 @@ public class MainController {
         return new ModelAndView("/index");
     }
 
+    @GetMapping("/new")
+    public ModelAndView test2() {
+        return new ModelAndView("/main/main");
+    }
+
+
 }

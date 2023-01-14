@@ -16,17 +16,22 @@ function createChatRoom(){
 	//관리자 여부와 상관없이 무조건 제일 먼저 입장한 사람이 대빵임 //추후 처리 해야함
 	var chatRoomType = $('input:radio[class="chatRoomType"]:checked').val();
 	var description = $('#create-chatroom-description').val() != '' ? $('#create-chatroom-description').val() : "Description";
-	var programIdx = chatRoomName;
-	var adminIdx = userIdx;
+	var chattingRoomSeq = chatRoomName;
+
 	//관리자 일 경우 처리
 	isAdmin = userId == 'admin' ? true : false;
 
-	userInfo.userMessageIdx = userIdx;
 	ChatClient.setUserInfo(userIdx, userId, userName, isAdmin);
-	ChatClient.enterChatRoom(programIdx, adminIdx, chatRoomName, description, chatRoomType,function(data) {
+
+	ChatClient.createChattingRoom(chattingRoomSeq, userIdx, chatRoomName, description, chatRoomType,function(data) {
 		ChatClient.getNewEvent(processEvents);
-		drawEnterChatRoom(programIdx, data.name, data.userIdx);
+		drawEnterChatRoom(chattingRoomSeq, data.name, data.userIdx);
 	});
+
+	// ChatClient.enterChatRoom(chattingRoomSeq, userIdx, chatRoomName, description, chatRoomType,function(data) {
+	// 	ChatClient.getNewEvent(processEvents);
+	// 	drawEnterChatRoom(chattingRoomSeq, data.name, data.userIdx);
+	// });
 }
 
 function sendMessage(){
@@ -133,8 +138,8 @@ var getUserList = function() {
 	});
 };
 
-var drawEnterChatRoom = function(programIdx, name) {
-	if (programIdx !== -1) {
+var drawEnterChatRoom = function(chattingRoomSeq, name) {
+	if (chattingRoomSeq !== -1) {
 		$('#room-name').html(name);
 		$('#chatting-room').show();
 
@@ -215,10 +220,10 @@ var processEvents = function(events) {
 //					$('#chat-room').append(tr);
 					console.log('CREATE_CHATROOM')
 					break;
-				case eventType.REMOVE_CHATROOM:
-					$('#ROOM_'+ event.programIdx).remove();
-					console.log('REMOVE_CHATROOM')
-					break;
+				// case eventType.REMOVE_CHATROOM:
+				// 	$('#ROOM_'+ event.programIdx).remove();
+				// 	console.log('REMOVE_CHATROOM')
+				// 	break;
 				case eventType.ENTER_USER:
 					addUserToUserList(event.fromUserIdx, event.userId, event.userName);
 					console.log('ENTER_USER')

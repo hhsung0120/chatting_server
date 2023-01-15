@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @Log4j2
 @RestController
 @RequiredArgsConstructor
@@ -20,15 +22,15 @@ public class ChattingRoomController {
     private final EventService eventService;
 
     @PostMapping("/create")
-    public ChattingRoom createChattingRoom(@RequestBody ChattingRoom ChattingRoom) throws Exception {
-        log.info("createChattingRoom : {}", ChattingRoom);
-        return eventService.enterChattingRoom(ChattingRoom);
+    public ChattingRoom createChattingRoom(@RequestBody ChattingRoom chattingRoom) throws Exception {
+        log.info("createChattingRoom : {}", chattingRoom);
+        return eventService.enterChattingRoom(chattingRoom);
     }
 
     @PostMapping("/enter-user")
-    public ChattingRoom enterChatRoom(@RequestBody ChattingRoom ChattingRoom) throws Exception {
-        log.info("enterChatRoom : {}", ChattingRoom);
-        return eventService.enterChattingRoom(ChattingRoom);
+    public ChattingRoom enterChatRoom(@RequestBody ChattingRoom chattingRoom) throws Exception {
+        log.info("enterChatRoom : {}", chattingRoom);
+        return eventService.enterChattingRoom(chattingRoom);
     }
 
     @PostMapping("/user-block")

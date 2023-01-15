@@ -17,12 +17,12 @@ var eventType = {
 	// 30 내가 추가  채팅 승인하면 30 됨 5번과 동시에 db 인설트 되며, 필요에 의해서 30만들었음
 	// false는  비정상 종료, true 버튼 종료
 };
-
-var ChatRoomType = {
-	MANYTOMANY : 0, //다대다
-	ONETOMANY : 1, //일대다 관리자 : 사용자
-	APPROVAL : 2 //승인 되어야 전송 됨
-}
+//
+// var ChatRoomType = {
+// 	MANYTOMANY : 0, //다대다
+// 	ONETOMANY : 1, //일대다 관리자 : 사용자
+// 	APPROVAL : 2 //승인 되어야 전송 됨
+// }
 
 
 

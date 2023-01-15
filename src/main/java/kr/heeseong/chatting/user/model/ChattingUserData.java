@@ -34,8 +34,8 @@ public class ChattingUserData {
         return ChattingUser.getUserIdx();
     }
 
-    public long getInternalIdx() {
-        return ChattingUser.getInternalIdx();
+    public long getChattingRoomSeq() {
+        return ChattingUser.getChattingRoomSeq();
     }
 
     public String getUserId() {

@@ -23,6 +23,7 @@ var ChatClient = function () {
     };
 
     var createChattingRoom = function (chattingRoomSeq, adminIdx, name, description, type, callback) {
+        console.log("createChattingRoom")
         if (!userInfo || userInfo.chattingRoomSeq === -1) {
             var sendData = {
                 adminIdx: adminIdx,
@@ -69,6 +70,7 @@ var ChatClient = function () {
     };
 
     var enterChatRoom = function (chattingRoomSeq, adminIdx, name, description, type, callback) {
+        console.log("enterChatRoom")
         if (!userInfo || userInfo.chattingRoomSeq === -1) {
             var sendData = {
                 adminIdx: adminIdx,

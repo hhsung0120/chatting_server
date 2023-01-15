@@ -23,15 +23,21 @@ function createChatRoom(){
 
 	ChatClient.setUserInfo(userIdx, userId, userName, isAdmin);
 
-	ChatClient.createChattingRoom(chattingRoomSeq, userIdx, chatRoomName, description, chatRoomType,function(data) {
-		ChatClient.getNewEvent(processEvents);
-		drawEnterChatRoom(chattingRoomSeq, data.name, data.userIdx);
-	});
-
-	// ChatClient.enterChatRoom(chattingRoomSeq, userIdx, chatRoomName, description, chatRoomType,function(data) {
-	// 	ChatClient.getNewEvent(processEvents);
-	// 	drawEnterChatRoom(chattingRoomSeq, data.name, data.userIdx);
-	// });
+	if(chattingRoomSeq == 1 || chattingRoomSeq == 3){
+		ChatClient.createChattingRoom(chattingRoomSeq, userIdx, chatRoomName, description, chatRoomType,function(data) {
+			ChatClient.getNewEvent(processEvents);
+			drawEnterChatRoom(chattingRoomSeq, data.name, data.userIdx);
+		});
+	}else{
+		if(chattingRoomSeq == 2 || chattingRoomSeq == 4){
+			chattingRoomSeq = chattingRoomSeq -1;
+			chatRoomName = chatRoomName -1;
+		}
+		ChatClient.enterChatRoom(chattingRoomSeq, userIdx, chatRoomName, description, chatRoomType,function(data) {
+			ChatClient.getNewEvent(processEvents);
+			drawEnterChatRoom(chattingRoomSeq, data.name, data.userIdx);
+		});
+	}
 }
 
 function sendMessage(){

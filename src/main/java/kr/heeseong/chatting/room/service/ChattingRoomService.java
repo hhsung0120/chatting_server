@@ -43,11 +43,11 @@ public class ChattingRoomService {
 
     public ChattingRoomData createChattingRoom(ChattingRoom chattingRoom) {
         WeakReference<ChattingRoomData> chatRoomRef = new WeakReference<>(new ChattingRoomData());
-        ChattingRoomData ChattingRoomData = chatRoomRef.get();
-        ChattingRoomData.setChattingRoom(chattingRoom);
+        ChattingRoomData chattingRoomData = chatRoomRef.get();
+        chattingRoomData.setChattingRoom(chattingRoom);
 
-        chattingRooms.put(ChattingRoomData.getChattingRoomSeq(), ChattingRoomData);
-        return ChattingRoomData;
+        chattingRooms.put(chattingRoomData.getChattingRoomSeq(), chattingRoomData);
+        return chattingRoomData;
     }
 
     public Long getChattingRoomSeq(){
@@ -165,24 +165,24 @@ public class ChattingRoomService {
 
         ChattingUserData chattingUserData;
         try {
-            chattingUserData = setChattingUser(chattingRoom.getChattingUser());
+           // chattingUserData = setChattingUser(chattingRoom.getChattingUser());
         } catch (Exception e) {
             log.error("setChattingUser exception : {}", e.getMessage());
             throw e;
         }
 
-        log.info("chattingUserData {}", chattingUserData);
+    //    log.info("chattingUserData {}", chattingUserData);
         log.info("chattingRoom {}", chattingRoom);
 
-        if (!chattingRoomData.addUser(chattingUserData.getChattingUser())) {
-            throw new UserExistException();
-        }
+//        if (!chattingRoomData.addUser(chattingUserData.getChattingUser())) {
+//            throw new UserExistException();
+//        }
 
         MessageEvent messageEvent = new MessageEvent(chattingRoom);
-        sendMessageEvent(chattingUserData.getInternalIdx(), messageEvent);
+       // sendMessageEvent(chattingUserData.getInternalIdx(), messageEvent);
 
         //chattingUserData.setProgramIdx(chattingRoom.getChattingRoomSeq());
-        chattingRoom.setInternalIdx(chattingUserData.getInternalIdx());
+        //chattingRoom.setInternalIdx(chattingUserData.getInternalIdx());
 
         //chattingMapper.insertEvent(messageEvent);
         return chattingRoom;
@@ -294,16 +294,16 @@ public class ChattingRoomService {
 //        }
     }
 
-    public ChattingUserData setChattingUser(ChattingUser chattingUser) {
-        chattingUser.setInternalIdx(chattingRoomSeq++);
-
-        WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUser));
-        ChattingUserData ChattingUserData = userRef.get();
-
-        chattingUserService.setCattingUsers(chattingUser.getInternalIdx(), ChattingUserData);
-
-        return ChattingUserData;
-    }
+//    public ChattingUserData setChattingUser(ChattingUser chattingUser) {
+//        chattingUser.setInternalIdx(chattingRoomSeq++);
+//
+//        WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUser));
+//        ChattingUserData ChattingUserData = userRef.get();
+//
+//        chattingUserService.setCattingUsers(chattingUser.getInternalIdx(), ChattingUserData);
+//
+//        return ChattingUserData;
+//    }
 
     public int removeUser(long internalIdx, Iterator<Map.Entry<Long, ChattingUserData>> userIteration) {
         ChattingUserData user = chattingUserService.getChattingUser(internalIdx);
@@ -466,7 +466,7 @@ public class ChattingRoomService {
             if (user != null) {
                 if (user.checkTimeOut()) {
                     try {
-                        leaveChatRoom(user.getInternalIdx(), user.getProgramIdx(), iter);
+                        leaveChatRoom(user.getChattingRoomSeq(), user.getProgramIdx(), iter);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

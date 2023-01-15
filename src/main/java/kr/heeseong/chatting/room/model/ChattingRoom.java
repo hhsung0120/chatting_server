@@ -1,24 +1,22 @@
 package kr.heeseong.chatting.room.model;
 
+import kr.heeseong.chatting.old.exceptions.BadArgumentException;
 import kr.heeseong.chatting.user.model.ChattingUser;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Map;
 
 @Getter
 @ToString
 public class ChattingRoom extends ChattingUser {
 
-    //올드 영역
-    @Setter
-    private Long internalIdx;
+    private Long chattingRoomSeq;
     private String name;
     private String description;
-    private int roomType; //
+    private int roomType;
     private long adminIdx;
-
-    //리팩토링 영역
-    private Long chattingRoomSeq;
     private int categorySeq;
     private String roomTitle;
     private String password;
@@ -28,13 +26,20 @@ public class ChattingRoom extends ChattingUser {
 
     public ChattingUser getChattingUser() {
         Boolean isAdmin = "admin".equals(super.getUserId());
-        return new ChattingUser(super.getUserIdx(), super.getUserId(), super.getUserName(), isAdmin, internalIdx);
+        return new ChattingUser(super.getUserIdx(), super.getUserId(), super.getUserName(), isAdmin);
     }
 
     public ChattingRoom() {
     }
 
-    public Long getInternalIdx() {
-        return getUserIdx();
+    @Builder(builderClassName = "createRoomBuilder", builderMethodName = "createRoomBuilder")
+    public ChattingRoom(Map<String, String> data) throws BadArgumentException {
+        super(Long.valueOf(data.get("userIdx")));
+
+        try{
+
+        } catch (Exception e) {
+            throw e;
+        }
     }
 }

@@ -2,6 +2,8 @@ package kr.heeseong.chatting.user.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 
 class ChattingUserDataTest {
@@ -39,6 +41,13 @@ class ChattingUserDataTest {
     @Test
     void finalTest() {
         final Long test;
+    }
+
+    @Test
+    void stringTest() {
+        Map<String, String > test = new HashMap<>();
+        System.out.println(test.get("test"));
+                
     }
 
 }

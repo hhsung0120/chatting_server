@@ -57,4 +57,8 @@ public class MessageEvent {
         this.userName = chattingRoom.getUserName();
         this.chattingRoomSeq = chattingRoom.getChattingRoomSeq();
     }
+
+    public void setwcmessage(){
+        message  = "나와뗘";
+    }
 }

@@ -39,7 +39,9 @@ var ChatClient = function () {
 
                 //고정 값
                 password: 1234,
-                categorySeq: 1
+                categorySeq: 1,
+                secretModeUseYn : 'n',
+                simultaneousConnectionsUseYn : 'n'
             };
 
             $.ajax({

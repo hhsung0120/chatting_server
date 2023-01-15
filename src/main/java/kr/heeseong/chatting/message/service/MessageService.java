@@ -31,16 +31,16 @@ public class MessageService {
             return;
         }
 
-        if (chattingRoomData.getChattingRoomType() == ChattingRoomType.MANY_TO_MANY.getValue()) {
+        if (chattingRoomData.getChattingRoomType() == ChattingRoomType.MANY_TO_MANY) {
             sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
-        } else if (chattingRoomData.getChattingRoomType() == ChattingRoomType.ONE_TO_MANY.getValue()) {
+        } else if (chattingRoomData.getChattingRoomType() == ChattingRoomType.ONE_TO_MANY) {
             if (chattingUserData != null && chattingUserData.isAdmin()) {
                 sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
             } else {
                 sendEventToPerson(chattingRoomData.getAdminIdx(), messageEvent, chattingRoomData);
                 sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, chattingRoomData);
             }
-        } else if (chattingRoomData.getChattingRoomType() == ChattingRoomType.APPROVAL.getValue()) {
+        } else if (chattingRoomData.getChattingRoomType() == ChattingRoomType.APPROVAL) {
             if (chattingUserData != null && chattingUserData.isAdmin()) {
                 sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
             } else {
@@ -66,6 +66,11 @@ public class MessageService {
         MessageEvent newMessageEvent = EventManager.cloneEvent(messageEvent);
         newMessageEvent.setMessageEventType(MessageEventType.NORMAL_MSG.getValue());
         sendEventToRoom(messageEvent.getFromUserIdx(), newMessageEvent, true, chattingRoomData);
+    }
+
+    public void sendEnterUserMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) {
+        messageEvent.setwcmessage();
+        sendEventToRoom(messageEvent.getFromUserIdx(), messageEvent, false, chattingRoomData);
     }
 
     public void sendEventToPerson(Long userIdx, MessageEvent messageEvent, ChattingRoomData room) {

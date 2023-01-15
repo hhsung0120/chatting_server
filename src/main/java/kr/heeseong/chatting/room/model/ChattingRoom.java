@@ -1,21 +1,24 @@
 package kr.heeseong.chatting.room.model;
 
-import kr.heeseong.chatting.old.exceptions.BadArgumentException;
+import kr.heeseong.chatting.old.event_enum.ChattingRoomType;
 import kr.heeseong.chatting.user.model.ChattingUser;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import lombok.extern.log4j.Log4j2;
+import org.thymeleaf.util.StringUtils;
 
 import java.util.Map;
 
+@Log4j2
 @Getter
 @ToString
 public class ChattingRoom extends ChattingUser {
 
     private Long chattingRoomSeq;
+    private ChattingRoomType roomType;
     private String name;
     private String description;
-    private int roomType;
     private long adminIdx;
     private int categorySeq;
     private String roomTitle;
@@ -33,13 +36,64 @@ public class ChattingRoom extends ChattingUser {
     }
 
     @Builder(builderClassName = "createRoomBuilder", builderMethodName = "createRoomBuilder")
-    public ChattingRoom(Map<String, String> data) throws BadArgumentException {
-        super(Long.valueOf(data.get("userIdx")));
+    public ChattingRoom(Map<String, String> data) throws Exception {
+        //TODO : 후에 세션이나 JWT 정보로 대체
+        super(Long.valueOf(data.get("userIdx")), data.get("userId") , data.get("userName"));
 
-        try{
-
+        //TODO : 이 값은 추후 DB 값으로 대체 해야함
+        //chattingRoomSeq
+        try {
+            chattingRoomSeq = Long.valueOf(data.get("chattingRoomSeq"));
+            if (chattingRoomSeq == null || chattingRoomSeq == 0) {
+                log.error("chattingRoomSeq value is required : {}", chattingRoomSeq);
+                throw new Exception();
+            }
         } catch (Exception e) {
+            log.error("chattingRoomSeq value is required : {}", chattingRoomSeq);
+            throw new Exception();
+        }
+
+        try {
+            roomType = ChattingRoomType.valueOf(data.get("roomType"));
+        } catch (Exception e) {
+            log.error("invalid room type : {}", data.get("roomType"));
             throw e;
+        }
+
+        try {
+            name = data.get("name");
+        } catch (Exception e) {
+            log.error("name value is required : {}", data.get("name"));
+            throw e;
+        }
+
+        try {
+            categorySeq = Integer.parseInt(data.get("categorySeq"));
+        } catch (Exception e) {
+            log.error("categorySeq value is required : {}", data.get("categorySeq"));
+            throw e;
+        }
+
+        description = data.get("description");
+        if (StringUtils.isEmpty(description)) {
+            description = "";
+        }
+
+        password = data.get("password");
+        if (StringUtils.isEmpty(password)) {
+            password = "";
+        }
+
+        secretModeUseYn = data.get("secretModeUseYn");
+        if (StringUtils.isEmpty(secretModeUseYn) || (!"n".equalsIgnoreCase(secretModeUseYn) && !"y".equalsIgnoreCase(secretModeUseYn))) {
+            log.error("invalid secretModeUseYn value : {}", data.get("secretModeUseYn"));
+            throw new Exception();
+        }
+
+        simultaneousConnectionsUseYn = data.get("simultaneousConnectionsUseYn");
+        if (StringUtils.isEmpty(simultaneousConnectionsUseYn) || (!"n".equalsIgnoreCase(simultaneousConnectionsUseYn) && !"y".equalsIgnoreCase(simultaneousConnectionsUseYn))) {
+            log.error("invalid simultaneousConnectionsUseYn value : {}", data.get("simultaneousConnectionsUseYn"));
+            throw new Exception();
         }
     }
 }

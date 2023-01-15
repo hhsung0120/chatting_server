@@ -22,9 +22,12 @@ public class ChattingRoomController {
     private final EventService eventService;
 
     @PostMapping("/create")
-    public ChattingRoom createChattingRoom(@RequestBody ChattingRoom chattingRoom) throws Exception {
-        log.info("createChattingRoom : {}", chattingRoom);
-        return eventService.enterChattingRoom(chattingRoom);
+    public ChattingRoom createChattingRoom(@RequestBody Map<String, String> roomData) throws Exception {
+        log.info("createChattingRoom : {}", roomData);
+        ChattingRoom chattingRoom = ChattingRoom.createRoomBuilder()
+                .data(roomData)
+                .build();
+        return eventService.createChattingRoom(chattingRoom);
     }
 
     @PostMapping("/enter-user")

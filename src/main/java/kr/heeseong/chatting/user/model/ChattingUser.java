@@ -18,6 +18,13 @@ public class ChattingUser {
         this.userIdx = userIdx;
     }
 
+    public ChattingUser(Long userIdx, String userId, String userName) {
+        this.userIdx = userIdx;
+        this.userId = userId;
+        this.userName = userName;
+        this.isAdmin = "admin".equals(userId);
+    }
+
     public ChattingUser(Long userIdx, String userId, String userName, boolean isAdmin) {
         this.userIdx = userIdx;
         this.userId = userId;

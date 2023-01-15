@@ -1,6 +1,8 @@
 package kr.heeseong.chatting.room.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import kr.heeseong.chatting.old.event_enum.ChattingRoomType;
+import kr.heeseong.chatting.old.exceptions.BadArgumentException;
 import kr.heeseong.chatting.user.model.ChattingUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -68,11 +70,12 @@ public class ChattingRoomData {
 //	}
 
     @JsonIgnore
-    public int getChattingRoomType() {
+    public ChattingRoomType getChattingRoomType() throws BadArgumentException {
         if (chattingRoom != null) {
             return chattingRoom.getRoomType();
         }
-        return 0;
+
+        throw new BadArgumentException();
     }
 
     @JsonIgnore

@@ -9,3 +9,7 @@
 2023-01-13
 * public ChattingUserData getChattingUser(Long userSeq) 검사 로직 채팅방 안에 유저가 있는지 검사 해야 함
 * 한명이 여러방에 존재하기때문
+
+2023-01-15
+* 소스 TODO 확인 해야함
+

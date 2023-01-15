@@ -31,7 +31,6 @@ function createChatRoom(){
 	}else{
 		if(chattingRoomSeq == 2 || chattingRoomSeq == 4){
 			chattingRoomSeq = chattingRoomSeq -1;
-			chatRoomName = chatRoomName -1;
 		}
 		ChatClient.enterChatRoom(chattingRoomSeq, userIdx, chatRoomName, description, chatRoomType,function(data) {
 			ChatClient.getNewEvent(processEvents);

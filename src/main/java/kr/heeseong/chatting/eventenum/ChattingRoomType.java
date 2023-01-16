@@ -1,4 +1,4 @@
-package kr.heeseong.chatting.old.event_enum;
+package kr.heeseong.chatting.eventenum;
 
 public enum ChattingRoomType {
     MANY_TO_MANY

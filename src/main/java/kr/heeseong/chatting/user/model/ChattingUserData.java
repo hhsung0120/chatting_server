@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @ToString
 public class ChattingUserData {
 
-    private ChattingUser ChattingUser;
+    private ChattingUser chattingUser;
 
     @Setter
     private Long programIdx;
@@ -24,30 +24,30 @@ public class ChattingUserData {
     private Long DEFAULT_MESSAGE_TIMEOUT = 60 * 1000 * 2L; // 2 minutes
     private Long userTimeout = DEFAULT_MESSAGE_TIMEOUT;
 
-    public ChattingUserData(ChattingUser ChattingUser) {
-        this.ChattingUser = ChattingUser;
+    public ChattingUserData(ChattingUser chattingUser) {
+        this.chattingUser = chattingUser;
         messageQueue = new ArrayBlockingQueue<>(10);
         latestMessageTime = System.currentTimeMillis();
     }
 
     public long getUserIdx() {
-        return ChattingUser.getUserIdx();
+        return chattingUser.getUserIdx();
     }
 
     public long getChattingRoomSeq() {
-        return ChattingUser.getChattingRoomSeq();
+        return chattingUser.getChattingRoomSeq();
     }
 
     public String getUserId() {
-        return ChattingUser.getUserId();
+        return chattingUser.getUserId();
     }
 
     public String getUserName() {
-        return ChattingUser.getUserName();
+        return chattingUser.getUserName();
     }
 
     public boolean isAdmin() {
-        return ChattingUser.isAdmin();
+        return chattingUser.isAdmin();
     }
 
     //메시지 전송
@@ -111,4 +111,6 @@ public class ChattingUserData {
             messageQueue = null;
         }
     }
+
+
 }

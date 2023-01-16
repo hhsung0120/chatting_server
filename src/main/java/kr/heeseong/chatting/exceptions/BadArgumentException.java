@@ -1,4 +1,4 @@
-package kr.heeseong.chatting.old.exceptions;
+package kr.heeseong.chatting.exceptions;
 
 public class BadArgumentException extends Exception {
 

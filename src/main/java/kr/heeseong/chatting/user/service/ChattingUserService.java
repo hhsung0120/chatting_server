@@ -1,11 +1,14 @@
 package kr.heeseong.chatting.user.service;
 
+import kr.heeseong.chatting.exceptions.UnauthorizedException;
 import kr.heeseong.chatting.user.model.ChattingUser;
 import kr.heeseong.chatting.user.model.ChattingUserData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.lang.ref.WeakReference;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
@@ -37,5 +40,31 @@ public class ChattingUserService {
 
         chattingUsers.put(chattingUser.getUserIdx(), chattingUserData);
         return chattingUserData;
+    }
+
+    public void checkAdmin(Long userIdx) throws Exception {
+        ChattingUserData user = getChattingUser(userIdx);
+        if (user == null || !user.isAdmin()) {
+            log.error("invalid admin user : {}", user);
+            throw new UnauthorizedException();
+        }
+    }
+
+    public void checkUsersTimeout() {
+        Iterator<Map.Entry<Long, ChattingUserData>> iter = getChattingUsers().entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<Long, ChattingUserData> userEntry = iter.next();
+            ChattingUserData user = userEntry.getValue();
+            if (user != null) {
+                if (user.checkTimeOut()) {
+                    try {
+                        //TODO : 이건 기다려봐..
+                        //leaveChatRoom(user.getChattingRoomSeq(), user.getProgramIdx(), iter);
+                    } catch (Exception e) {
+                        log.error("checkUsersTimeout exception : {}", e.getMessage());
+                    }
+                }
+            }
+        }
     }
 }

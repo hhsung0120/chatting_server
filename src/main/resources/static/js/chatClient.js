@@ -165,11 +165,11 @@ var ChatClient = function () {
 
         $.ajax({
             method: "GET",
-            url: '/chattingRoom/users',
+            url: '/chatting-room/users',
             contentType: 'application/json; charset=UTF-8',
             cache: false, //새로 추가 16.10.04  IE에서 기존 유저 새로고침 할 시 나감 처리 및 새로운 유저 입장 처리 해주기 위해 캐쉬 false;
             data: {
-                'programIdx': userInfo.chattingRoomSeq
+                'chattingRoomSeq': userInfo.chattingRoomSeq
             },
         }).done(function (data) {
             callback(data);
@@ -191,7 +191,9 @@ var ChatClient = function () {
     };
 
     var getNewEvent = function (callback) {
-
+        console.log("getNewEvent");
+        console.log(userInfo);
+        console.log("getNewEvent");
         if (userInfo.userIdx !== -1 && userInfo.chattingRoomSeq !== -1) {
             $.ajax({
                 method: "GET",

@@ -57,13 +57,13 @@ public class MessageController {
         return chattingService.getNewEvents(internalIdx);
     }
 
-    @PostMapping(value = "/event")
-    public MessageEvent sendEvent(
-            @RequestHeader("internalIdx") Long internalIdx,
-            @RequestBody MessageEvent messageEvent) throws Exception {
-
-        log.info("internalIdx : {}", internalIdx);
-        log.info("messageEvent : {}", messageEvent);
-        return chattingService.sendEvent(internalIdx, messageEvent);
-    }
+//    @PostMapping(value = "/event")
+//    public MessageEvent sendEvent(
+//            @RequestHeader("internalIdx") Long internalIdx,
+//            @RequestBody MessageEvent messageEvent) throws Exception {
+//
+//        log.info("internalIdx : {}", internalIdx);
+//        log.info("messageEvent : {}", messageEvent);
+//        return chattingService.sendEvent(internalIdx, messageEvent);
+//    }
 }

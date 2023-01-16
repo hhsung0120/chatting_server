@@ -1,17 +1,22 @@
 package kr.heeseong.chatting.event.service;
 
+import kr.heeseong.chatting.exceptions.BadArgumentException;
+import kr.heeseong.chatting.exceptions.ChatRoomNotExistException;
+import kr.heeseong.chatting.exceptions.UserExistException;
 import kr.heeseong.chatting.message.service.MessageService;
-import kr.heeseong.chatting.old.exceptions.ChatRoomNotExistException;
-import kr.heeseong.chatting.old.exceptions.UserExistException;
 import kr.heeseong.chatting.room.model.ChattingRoom;
 import kr.heeseong.chatting.room.model.ChattingRoomData;
 import kr.heeseong.chatting.room.model.MessageEvent;
 import kr.heeseong.chatting.room.service.ChattingRoomService;
+import kr.heeseong.chatting.user.model.ChattingUser;
 import kr.heeseong.chatting.user.model.ChattingUserData;
 import kr.heeseong.chatting.user.service.ChattingUserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 @Log4j2
 @Service
@@ -23,25 +28,17 @@ public class EventService {
     private final MessageService messageService;
 
     public ChattingRoom createChattingRoom(ChattingRoom chattingRoom) throws Exception {
-
         //채팅 방 존재 확인
         ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(chattingRoom.getChattingRoomSeq());
         if (chattingRoomData == null) {
             chattingRoomData = chattingRoomService.createChattingRoom(chattingRoom);
         }
 
-        //채팅방 유저 셋팅
-        ChattingUserData chattingUserData;
         try {
-            chattingUserData = chattingUserService.setChattingUser(chattingRoom.getChattingUser());
+            enterChattingRoom(chattingRoom);
         } catch (Exception e) {
-            log.error("setChattingUser exception : {}", e.getMessage());
+            log.error("enter room exception : {}", e.getMessage());
             throw e;
-        }
-
-        if (!chattingRoomData.addUser(chattingUserData.getChattingUser())) {
-            log.error("room to add user exception : {}", chattingUserData);
-            throw new UserExistException();
         }
 
         MessageEvent messageEvent = new MessageEvent(chattingRoom);
@@ -66,13 +63,11 @@ public class EventService {
             throw e;
         }
 
+        log.info("users : {}", chattingUserData.getChattingUser().toString());
         if (!chattingRoomData.addUser(chattingUserData.getChattingUser())) {
             log.error("room to add user exception : {}", chattingUserData);
             throw new UserExistException();
         }
-
-        MessageEvent messageEvent = new MessageEvent(chattingRoom);
-        messageService.sendMessageEvent(chattingUserData.getUserIdx(), messageEvent, chattingRoomData);
 
         return chattingRoom;
     }
@@ -124,7 +119,7 @@ public class EventService {
         }
 
         messageEvent.setMessageEventType(6);
-        messageService.sendRejectMessage(messageEvent, chattingRoomData);
+        messageService.sendRejectMessage(messageEvent);
 
         return messageEvent;
     }
@@ -143,24 +138,40 @@ public class EventService {
     }
 
     public void addBlockUser(MessageEvent messageEvent) throws Exception {
-        chattingRoomService.checkAdmin(messageEvent.getFromUserIdx());
+        chattingUserService.checkAdmin(messageEvent.getFromUserIdx());
 
         ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(messageEvent.getChattingRoomSeq());
         if (chattingRoomData == null) {
             throw new ChatRoomNotExistException();
         }
 
-        chattingRoomData.addBlackList(messageEvent.getToUserIdx());
+        chattingRoomData.addBlockList(messageEvent.getToUserIdx());
     }
 
     public void removeBlockUser(MessageEvent messageEvent) throws Exception {
-        chattingRoomService.checkAdmin(messageEvent.getFromUserIdx());
+        chattingUserService.checkAdmin(messageEvent.getFromUserIdx());
 
         ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(messageEvent.getChattingRoomSeq());
         if (chattingRoomData == null) {
             throw new ChatRoomNotExistException();
         }
 
-        chattingRoomData.removeBlackList(messageEvent.getToUserIdx());
+        chattingRoomData.removeBlockList(messageEvent.getToUserIdx());
+    }
+
+    public ArrayList<ChattingUser> chattingRoomUserList(Long chattingRoomSeq) throws Exception {
+        ArrayList<ChattingUser> userList = new ArrayList<>();
+
+        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(chattingRoomSeq);
+        if (chattingRoomData == null) {
+            log.error("chattingRoomData is null / - chattingRoomSeq : {}", chattingRoomSeq);
+            throw new BadArgumentException();
+        }
+
+        for (Map.Entry<Long, ChattingUser> userEntry : chattingRoomData.getUserList().entrySet()) {
+            userList.add(userEntry.getValue());
+        }
+
+        return userList;
     }
 }

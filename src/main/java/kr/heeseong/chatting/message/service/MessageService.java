@@ -1,8 +1,8 @@
 package kr.heeseong.chatting.message.service;
 
-import kr.heeseong.chatting.old.event_enum.ChattingRoomType;
-import kr.heeseong.chatting.old.event_enum.MessageEventType;
-import kr.heeseong.chatting.old.exceptions.BadArgumentException;
+import kr.heeseong.chatting.eventenum.ChattingRoomType;
+import kr.heeseong.chatting.eventenum.MessageEventType;
+import kr.heeseong.chatting.exceptions.BadArgumentException;
 import kr.heeseong.chatting.room.model.ChattingRoomData;
 import kr.heeseong.chatting.room.model.EventManager;
 import kr.heeseong.chatting.room.model.MessageEvent;
@@ -25,7 +25,7 @@ public class MessageService {
         Long fromUserIdx = messageEvent.getFromUserIdx();
         ChattingUserData chattingUserData = chattingUserService.getChattingUser(fromUserIdx);
 
-        if (chattingRoomData.isBlackList(messageEvent.getFromUserIdx())) {
+        if (chattingRoomData.isBlockUser(messageEvent.getFromUserIdx())) {
             messageEvent.setMessageEventType(MessageEventType.BLOCKED_MSG.getValue());
             sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent);
             return;
@@ -69,7 +69,6 @@ public class MessageService {
     }
 
     public void sendEnterUserMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) {
-        messageEvent.setwcmessage();
         sendEventToRoom(messageEvent.getFromUserIdx(), messageEvent, false, chattingRoomData);
     }
 
@@ -131,7 +130,7 @@ public class MessageService {
         }
     }
 
-    public void sendRejectMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) {
+    public void sendRejectMessage(MessageEvent messageEvent) {
         sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent);
     }
 

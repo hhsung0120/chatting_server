@@ -1,8 +1,8 @@
 package kr.heeseong.chatting.room.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import kr.heeseong.chatting.old.event_enum.ChattingRoomType;
-import kr.heeseong.chatting.old.exceptions.BadArgumentException;
+import kr.heeseong.chatting.eventenum.ChattingRoomType;
+import kr.heeseong.chatting.exceptions.BadArgumentException;
 import kr.heeseong.chatting.user.model.ChattingUser;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,15 +19,7 @@ public class ChattingRoomData {
     private ConcurrentHashMap<Long, ChattingUser> users;
     private Object userLock = new Object();
     private Object blackLock = new Object();
-    private HashSet<Long> blackList = new HashSet<Long>();
-
-    @JsonIgnore
-    public String getName() {
-        if (chattingRoom != null) {
-            return chattingRoom.getName();
-        }
-        return null;
-    }
+    private HashSet<Long> blockList = new HashSet<>();
 
     @JsonIgnore
     public String getPassword() {
@@ -133,28 +125,28 @@ public class ChattingRoomData {
         return 0;
     }
 
-    public void addBlackList(Long userIdx) {
+    public void addBlockList(Long userIdx) {
         synchronized (blackLock) {
-            blackList.add(userIdx);
+            blockList.add(userIdx);
         }
     }
 
-    public boolean isBlackList(Long userIdx) {
-        return blackList.contains(userIdx);
+    public boolean isBlockUser(Long userIdx) {
+        return blockList.contains(userIdx);
     }
 
     public HashSet<Long> getBlackList() {
-        return blackList;
+        return blockList;
     }
 
     @JsonIgnore
     public Long[] getBlackListArray() {
-        return (Long[]) blackList.toArray();
+        return (Long[]) blockList.toArray();
     }
 
-    public void removeBlackList(Long userIdx) {
+    public void removeBlockList(Long userIdx) {
         synchronized (blackLock) {
-            blackList.remove(userIdx);
+            blockList.remove(userIdx);
         }
     }
 }

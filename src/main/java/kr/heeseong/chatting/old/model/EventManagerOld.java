@@ -1,7 +1,7 @@
 package kr.heeseong.chatting.old.model;
 
 
-import kr.heeseong.chatting.old.event_enum.MessageEventType;
+import kr.heeseong.chatting.eventenum.MessageEventType;
 
 public class EventManagerOld {
 	public static MessageEventOld makeCreateRoomEvent(ChattingRoomOld chattingRoom) {

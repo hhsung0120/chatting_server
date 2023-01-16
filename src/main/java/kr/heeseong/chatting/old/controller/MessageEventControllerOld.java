@@ -24,11 +24,11 @@ public class MessageEventControllerOld {
         return chattingService.getNewEvents(internalIdx);
     }
 
-    @RequestMapping(value = "/event", method = RequestMethod.POST)
-    public MessageEvent sendEventOld(
-            @RequestHeader("internalIdx") Long internalIdx,
-            @RequestBody MessageEvent messageEventOld) throws Exception {
-        System.out.println(22222);
-        return chattingService.sendEvent(internalIdx, messageEventOld);
-    }
+//    @RequestMapping(value = "/event", method = RequestMethod.POST)
+//    public MessageEvent sendEventOld(
+//            @RequestHeader("internalIdx") Long internalIdx,
+//            @RequestBody MessageEvent messageEventOld) throws Exception {
+//        System.out.println(22222);
+//        return chattingService.sendEvent(internalIdx, messageEventOld);
+//    }
 }

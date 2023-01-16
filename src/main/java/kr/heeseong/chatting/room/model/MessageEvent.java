@@ -1,6 +1,6 @@
 package kr.heeseong.chatting.room.model;
 
-import kr.heeseong.chatting.old.event_enum.MessageEventType;
+import kr.heeseong.chatting.eventenum.MessageEventType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -56,9 +56,5 @@ public class MessageEvent {
         this.userId = chattingRoom.getUserId();
         this.userName = chattingRoom.getUserName();
         this.chattingRoomSeq = chattingRoom.getChattingRoomSeq();
-    }
-
-    public void setwcmessage(){
-        message  = "나와뗘";
     }
 }

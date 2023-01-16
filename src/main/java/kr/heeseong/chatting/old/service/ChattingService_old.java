@@ -1,8 +1,7 @@
 package kr.heeseong.chatting.old.service;
 
-import kr.heeseong.chatting.old.event_enum.ChattingRoomType;
-import kr.heeseong.chatting.old.event_enum.MessageEventType;
-import kr.heeseong.chatting.old.exceptions.*;
+import kr.heeseong.chatting.eventenum.MessageEventType;
+import kr.heeseong.chatting.exceptions.*;
 import kr.heeseong.chatting.old.mapper.ChattingMapper;
 import kr.heeseong.chatting.old.model.*;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package kr.heeseong.chatting.room.model;
 
-import kr.heeseong.chatting.old.event_enum.ChattingRoomType;
+import kr.heeseong.chatting.eventenum.ChattingRoomType;
 import kr.heeseong.chatting.user.model.ChattingUser;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,14 +36,14 @@ public class ChattingRoom extends ChattingUser {
     }
 
     @Builder(builderClassName = "createRoomBuilder", builderMethodName = "createRoomBuilder")
-    public ChattingRoom(Map<String, String> data) throws Exception {
+    public ChattingRoom(Map<String, String> createRoomData) throws Exception {
         //TODO : 후에 세션이나 JWT 정보로 대체
-        super(Long.valueOf(data.get("userIdx")), data.get("userId") , data.get("userName"));
+        super(Long.valueOf(createRoomData.get("userIdx")), createRoomData.get("userId") , createRoomData.get("userName"));
 
         //TODO : 이 값은 추후 DB 값으로 대체 해야함
         //chattingRoomSeq
         try {
-            chattingRoomSeq = Long.valueOf(data.get("chattingRoomSeq"));
+            chattingRoomSeq = Long.valueOf(createRoomData.get("chattingRoomSeq"));
             if (chattingRoomSeq == null || chattingRoomSeq == 0) {
                 log.error("chattingRoomSeq value is required : {}", chattingRoomSeq);
                 throw new Exception();
@@ -54,46 +54,53 @@ public class ChattingRoom extends ChattingUser {
         }
 
         try {
-            roomType = ChattingRoomType.valueOf(data.get("roomType"));
+            roomType = ChattingRoomType.valueOf(createRoomData.get("roomType"));
         } catch (Exception e) {
-            log.error("invalid room type : {}", data.get("roomType"));
+            log.error("invalid room type : {}", createRoomData.get("roomType"));
             throw e;
         }
 
         try {
-            name = data.get("name");
+            name = createRoomData.get("name");
         } catch (Exception e) {
-            log.error("name value is required : {}", data.get("name"));
+            log.error("name value is required : {}", createRoomData.get("name"));
             throw e;
         }
 
         try {
-            categorySeq = Integer.parseInt(data.get("categorySeq"));
+            categorySeq = Integer.parseInt(createRoomData.get("categorySeq"));
         } catch (Exception e) {
-            log.error("categorySeq value is required : {}", data.get("categorySeq"));
+            log.error("categorySeq value is required : {}", createRoomData.get("categorySeq"));
             throw e;
         }
 
-        description = data.get("description");
+        description = createRoomData.get("description");
         if (StringUtils.isEmpty(description)) {
             description = "";
         }
 
-        password = data.get("password");
+        password = createRoomData.get("password");
         if (StringUtils.isEmpty(password)) {
             password = "";
         }
 
-        secretModeUseYn = data.get("secretModeUseYn");
+        secretModeUseYn = createRoomData.get("secretModeUseYn");
         if (StringUtils.isEmpty(secretModeUseYn) || (!"n".equalsIgnoreCase(secretModeUseYn) && !"y".equalsIgnoreCase(secretModeUseYn))) {
-            log.error("invalid secretModeUseYn value : {}", data.get("secretModeUseYn"));
+            log.error("invalid secretModeUseYn value : {}", createRoomData.get("secretModeUseYn"));
             throw new Exception();
         }
 
-        simultaneousConnectionsUseYn = data.get("simultaneousConnectionsUseYn");
+        simultaneousConnectionsUseYn = createRoomData.get("simultaneousConnectionsUseYn");
         if (StringUtils.isEmpty(simultaneousConnectionsUseYn) || (!"n".equalsIgnoreCase(simultaneousConnectionsUseYn) && !"y".equalsIgnoreCase(simultaneousConnectionsUseYn))) {
-            log.error("invalid simultaneousConnectionsUseYn value : {}", data.get("simultaneousConnectionsUseYn"));
+            log.error("invalid simultaneousConnectionsUseYn value : {}", createRoomData.get("simultaneousConnectionsUseYn"));
             throw new Exception();
         }
+    }
+
+    @Builder(builderClassName = "roomAndUserBuilder", builderMethodName = "roomAndUserBuilder")
+    public ChattingRoom(Map<String, String> roomAndUserData) throws Exception {
+
+        super(Long.valueOf(roomAndUserData.get("userIdx")));
+
     }
 }

@@ -6,36 +6,36 @@ import kr.heeseong.chatting.exceptions.BadArgumentException;
 import kr.heeseong.chatting.user.model.ChattingUser;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
+@ToString
 public class ChattingRoomData {
 
     @Setter
     private ChattingRoom chattingRoom;
     private ConcurrentHashMap<Long, ChattingUser> users;
-    private Object userLock = new Object();
-    private Object blackLock = new Object();
     private HashSet<Long> blockList = new HashSet<>();
 
-    @JsonIgnore
-    public String getPassword() {
-        if (chattingRoom != null) {
-            return chattingRoom.getPassword();
-        }
-        return null;
-    }
+//    @JsonIgnore
+//    public String getPassword() {
+//        if (chattingRoom != null) {
+//            return chattingRoom.getPassword();
+//        }
+//        return null;
+//    }
 
-    @JsonIgnore
-    public String getDescription() {
-        if (chattingRoom != null) {
-            return chattingRoom.getDescription();
-        }
-        return null;
-    }
+//    @JsonIgnore
+//    public String getDescription() {
+//        if (chattingRoom != null) {
+//            return chattingRoom.getDescription();
+//        }
+//        return null;
+//    }
 
     @JsonIgnore
     public Long getChattingRoomSeq() {
@@ -45,13 +45,13 @@ public class ChattingRoomData {
         return 0L;
     }
 
-    @JsonIgnore
-    public long getUserIdx() {
-        if (chattingRoom != null) {
-            return chattingRoom.getUserIdx();
-        }
-        return -1;
-    }
+//    @JsonIgnore
+//    public Long getUserIdx() {
+//        if (chattingRoom != null) {
+//            return chattingRoom.getUserIdx();
+//        }
+//        return -1L;
+//    }
 
 //	@JsonIgnore
 //	public String getStatus() {
@@ -118,17 +118,13 @@ public class ChattingRoomData {
             return -1;
         }
 
-        synchronized (userLock) {
-            users.remove(internalIdx);
-        }
+        users.remove(internalIdx);
 
         return 0;
     }
 
     public void addBlockList(Long userIdx) {
-        synchronized (blackLock) {
-            blockList.add(userIdx);
-        }
+        blockList.add(userIdx);
     }
 
     public boolean isBlockUser(Long userIdx) {
@@ -145,8 +141,6 @@ public class ChattingRoomData {
     }
 
     public void removeBlockList(Long userIdx) {
-        synchronized (blackLock) {
-            blockList.remove(userIdx);
-        }
+        blockList.remove(userIdx);
     }
 }

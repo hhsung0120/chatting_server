@@ -2,9 +2,7 @@ package kr.heeseong.chatting.room.model;
 
 import kr.heeseong.chatting.eventenum.ChattingRoomType;
 import kr.heeseong.chatting.user.model.ChattingUser;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.log4j.Log4j2;
 import org.thymeleaf.util.StringUtils;
 
@@ -13,13 +11,14 @@ import java.util.Map;
 @Log4j2
 @Getter
 @ToString
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ChattingRoom extends ChattingUser {
 
     private Long chattingRoomSeq;
     private ChattingRoomType roomType;
     private String name;
     private String description;
-    private long adminIdx;
+    private Long adminIdx;
     private int categorySeq;
     private String roomTitle;
     private String password;
@@ -32,13 +31,15 @@ public class ChattingRoom extends ChattingUser {
         return new ChattingUser(super.getUserIdx(), super.getUserId(), super.getUserName(), isAdmin);
     }
 
-    public ChattingRoom() {
+    public static ChattingRoom setCreateRoom(Map<String, String> createRoomData) throws Exception {
+        return new ChattingRoom(createRoomData);
     }
 
-    @Builder(builderClassName = "createRoomBuilder", builderMethodName = "createRoomBuilder")
-    public ChattingRoom(Map<String, String> createRoomData) throws Exception {
+    private ChattingRoom(Map<String, String> createRoomData) throws Exception {
         //TODO : 후에 세션이나 JWT 정보로 대체
-        super(Long.valueOf(createRoomData.get("userIdx")), createRoomData.get("userId") , createRoomData.get("userName"));
+        super(Long.valueOf(createRoomData.get("userIdx")), createRoomData.get("userId"), createRoomData.get("userName"));
+
+        adminIdx = Long.valueOf(createRoomData.get("userIdx"));
 
         //TODO : 이 값은 추후 DB 값으로 대체 해야함
         //chattingRoomSeq
@@ -95,12 +96,5 @@ public class ChattingRoom extends ChattingUser {
             log.error("invalid simultaneousConnectionsUseYn value : {}", createRoomData.get("simultaneousConnectionsUseYn"));
             throw new Exception();
         }
-    }
-
-    @Builder(builderClassName = "roomAndUserBuilder", builderMethodName = "roomAndUserBuilder")
-    public ChattingRoom(Map<String, String> roomAndUserData) throws Exception {
-
-        super(Long.valueOf(roomAndUserData.get("userIdx")));
-
     }
 }

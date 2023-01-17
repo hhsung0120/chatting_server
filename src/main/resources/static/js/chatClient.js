@@ -75,20 +75,10 @@ var ChatClient = function () {
         console.log("enterChatRoom")
         if (!userInfo || userInfo.chattingRoomSeq === -1) {
             var sendData = {
-                adminIdx: adminIdx,
-
-                //나에게 필요한 값
-                name: name,
-                description: description,
-                roomType: type,
                 userId: userInfo.userId,
                 userIdx: userInfo.userIdx,
                 userName: userInfo.userName,
                 chattingRoomSeq: chattingRoomSeq,
-
-                //고정 값
-                password: 1234,
-                categorySeq: 1
             };
 
             $.ajax({

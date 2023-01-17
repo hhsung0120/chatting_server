@@ -40,7 +40,7 @@ public class ChattingRoomService {
         ChattingRoomData chattingRoomData = chatRoomRef.get();
         chattingRoomData.setChattingRoom(chattingRoom);
 
-        chattingRooms.put(chattingRoomData.getChattingRoomSeq(), chattingRoomData);
+        chattingRooms.put(chattingRoom.getChattingRoomSeq(), chattingRoomData);
         return chattingRoomData;
     }
 

@@ -12,6 +12,7 @@ public class ChattingUser {
     private Long chattingRoomSeq;
 
     public ChattingUser() {
+
     }
 
     public ChattingUser(Long userIdx) {
@@ -32,5 +33,13 @@ public class ChattingUser {
         this.isAdmin = isAdmin;
     }
 
-
+    public String toStringUser() {
+        return "ChattingUser{" +
+                "userIdx=" + userIdx +
+                ", userId='" + userId + '\'' +
+                ", userName='" + userName + '\'' +
+                ", isAdmin=" + isAdmin +
+                ", chattingRoomSeq=" + chattingRoomSeq +
+                '}';
+    }
 }

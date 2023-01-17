@@ -37,6 +37,9 @@ public class MessageService {
             if (chattingUserData != null && chattingUserData.isAdmin()) {
                 sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
             } else {
+
+                System.out.println(chattingRoomData);
+                System.out.println(messageEvent);
                 sendEventToPerson(chattingRoomData.getAdminIdx(), messageEvent, chattingRoomData);
                 sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, chattingRoomData);
             }

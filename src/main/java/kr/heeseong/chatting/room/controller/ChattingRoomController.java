@@ -22,18 +22,13 @@ public class ChattingRoomController {
     @PostMapping("/create")
     public ChattingRoom createChattingRoom(@RequestBody Map<String, String> roomData) throws Exception {
         log.info("createChattingRoom : {}", roomData);
-        ChattingRoom createRoom = ChattingRoom.createRoomBuilder()
-                .createRoomData(roomData)
-                .build();
+        ChattingRoom createRoom = ChattingRoom.setCreateRoom(roomData);
         return eventService.createChattingRoom(createRoom);
     }
 
     @PostMapping("/enter-user")
-    public ChattingRoom enterChatRoom(@RequestBody Map<String, String> enterUser) throws Exception {
+    public ChattingRoom enterChatRoom(@RequestBody ChattingRoom enterUser) throws Exception {
         log.info("enterChatRoom : {}", enterUser);
-        ChattingRoom roomAndUser = ChattingRoom.roomAndUserBuilder()
-                .roomAndUserData(enterUser)
-                .build();
         return eventService.enterChattingRoom(enterUser);
     }
 

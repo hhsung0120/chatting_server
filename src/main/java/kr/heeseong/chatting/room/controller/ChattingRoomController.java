@@ -26,6 +26,7 @@ public class ChattingRoomController {
         return eventService.createChattingRoom(createRoom);
     }
 
+
     @PostMapping("/enter-user")
     public ChattingRoom enterChatRoom(@RequestBody ChattingRoom enterUser) throws Exception {
         log.info("enterChatRoom : {}", enterUser);
@@ -45,7 +46,7 @@ public class ChattingRoomController {
     }
 
     @GetMapping(value = "/users")
-    public ArrayList<ChattingUser> roomUserList(@RequestParam("chattingRoomSeq") Long chattingRoomSeq) throws Exception{
+    public ArrayList<ChattingUser> roomUserList(@RequestParam("chattingRoomSeq") Long chattingRoomSeq) throws Exception {
         return eventService.chattingRoomUserList(chattingRoomSeq);
     }
 }

@@ -11,7 +11,6 @@ import java.util.Map;
 @Log4j2
 @Getter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ChattingRoom extends ChattingUser {
 
     private Long chattingRoomSeq;

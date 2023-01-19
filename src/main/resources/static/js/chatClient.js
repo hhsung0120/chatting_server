@@ -41,7 +41,8 @@ var ChatClient = function () {
                 password: 1234,
                 categorySeq: 1,
                 secretModeUseYn : 'n',
-                simultaneousConnectionsUseYn : 'n'
+                simultaneousConnectionsUseYn : 'n',
+                roomTitle : '2:2욤'
             };
 
             $.ajax({
@@ -53,7 +54,7 @@ var ChatClient = function () {
                 data: JSON.stringify(sendData)
             }).done(function (data) {
                 console.log(data)
-                userInfo.internalIdx = data.userIdx;
+                userInfo.userIdx = data.userIdx;
                 userInfo.chattingRoomSeq = data.chattingRoomSeq;
                 if (callback) {
                     callback(data);
@@ -189,8 +190,9 @@ var ChatClient = function () {
                 method: "GET",
                 url: '/message/event',
                 contentType: 'application/json; charset=UTF-8',
-                cache: false,
-                headers: userInfo
+                data: {
+                    'userIdx': userInfo.userIdx
+                },
             }).done(function (data) {
                 if (callback) {
                     callback(data);

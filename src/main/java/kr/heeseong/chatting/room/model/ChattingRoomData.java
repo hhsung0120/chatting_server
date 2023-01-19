@@ -21,29 +21,6 @@ public class ChattingRoomData {
     private ConcurrentHashMap<Long, ChattingUser> users;
     private HashSet<Long> blockList = new HashSet<>();
 
-//    @JsonIgnore
-//    public String getPassword() {
-//        if (chattingRoom != null) {
-//            return chattingRoom.getPassword();
-//        }
-//        return null;
-//    }
-
-//    @JsonIgnore
-//    public String getDescription() {
-//        if (chattingRoom != null) {
-//            return chattingRoom.getDescription();
-//        }
-//        return null;
-//    }
-
-    @JsonIgnore
-    public Long getChattingRoomSeq() {
-        if (chattingRoom != null) {
-            return chattingRoom.getChattingRoomSeq();
-        }
-        return 0L;
-    }
 
 //    @JsonIgnore
 //    public Long getUserIdx() {

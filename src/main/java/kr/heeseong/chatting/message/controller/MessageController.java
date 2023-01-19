@@ -48,13 +48,10 @@ public class MessageController {
         return eventService.sendAdminMessage(messageEvent);
     }
 
-
-
     @GetMapping(value = "/event")
-    public ArrayList<MessageEvent> getEvent(
-            @RequestHeader("internalIdx") Long internalIdx) throws Exception {
-        System.out.println("internalIdx : " + internalIdx);
-        return chattingService.getNewEvents(internalIdx);
+    public ArrayList<MessageEvent> getEvent(@RequestParam("userIdx") Long userIdx) throws Exception {
+        log.info("userIdx : {}", userIdx);
+        return chattingService.getNewEvents(userIdx);
     }
 
 //    @PostMapping(value = "/event")

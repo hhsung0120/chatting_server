@@ -28,7 +28,8 @@ public class EventService {
     private final MessageService messageService;
 
     public ChattingRoom createChattingRoom(ChattingRoom chattingRoom) throws Exception {
-        log.info("createChattingRoom : {}", chattingRoom.toStringUser());
+        log.info("createChattingRoom : {}", chattingRoom);
+
         //채팅 방 존재 확인
         ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(chattingRoom.getChattingRoomSeq());
         if (chattingRoomData == null) {

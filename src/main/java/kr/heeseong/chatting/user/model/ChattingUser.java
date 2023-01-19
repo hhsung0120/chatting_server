@@ -9,14 +9,9 @@ public class ChattingUser {
     private String userId;
     private String userName;
     private boolean isAdmin;
-    private Long chattingRoomSeq;
 
     public ChattingUser() {
 
-    }
-
-    public ChattingUser(Long userIdx) {
-        this.userIdx = userIdx;
     }
 
     public ChattingUser(Long userIdx, String userId, String userName) {
@@ -39,7 +34,6 @@ public class ChattingUser {
                 ", userId='" + userId + '\'' +
                 ", userName='" + userName + '\'' +
                 ", isAdmin=" + isAdmin +
-                ", chattingRoomSeq=" + chattingRoomSeq +
                 '}';
     }
 }

@@ -53,14 +53,4 @@ public class MessageController {
         log.info("userIdx : {}", userIdx);
         return chattingService.getNewEvents(userIdx);
     }
-
-//    @PostMapping(value = "/event")
-//    public MessageEvent sendEvent(
-//            @RequestHeader("internalIdx") Long internalIdx,
-//            @RequestBody MessageEvent messageEvent) throws Exception {
-//
-//        log.info("internalIdx : {}", internalIdx);
-//        log.info("messageEvent : {}", messageEvent);
-//        return chattingService.sendEvent(internalIdx, messageEvent);
-//    }
 }

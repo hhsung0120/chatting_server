@@ -3,6 +3,7 @@ package kr.heeseong.chatting.message.service;
 import kr.heeseong.chatting.eventenum.ChattingRoomType;
 import kr.heeseong.chatting.eventenum.MessageEventType;
 import kr.heeseong.chatting.exceptions.BadArgumentException;
+import kr.heeseong.chatting.exceptions.UserNotExistException;
 import kr.heeseong.chatting.room.model.ChattingRoomData;
 import kr.heeseong.chatting.room.model.EventManager;
 import kr.heeseong.chatting.room.model.MessageEvent;
@@ -20,10 +21,15 @@ public class MessageService {
     private final ChattingUserService chattingUserService;
 
     //2023-01-13 정리
-    public void sendGeneralMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws BadArgumentException {
+    public void sendGeneralMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
 
         Long fromUserIdx = messageEvent.getFromUserIdx();
         ChattingUserData chattingUserData = chattingUserService.getChattingUser(fromUserIdx);
+
+        if (chattingUserData == null) {
+            log.error("chattingUserData is null / fromUserIdx : {}", fromUserIdx);
+            throw new UserNotExistException();
+        }
 
         if (chattingRoomData.isBlockUser(messageEvent.getFromUserIdx())) {
             messageEvent.setMessageEventType(MessageEventType.BLOCKED_MSG.getValue());
@@ -34,17 +40,16 @@ public class MessageService {
         if (chattingRoomData.getChattingRoomType() == ChattingRoomType.MANY_TO_MANY) {
             sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
         } else if (chattingRoomData.getChattingRoomType() == ChattingRoomType.ONE_TO_MANY) {
-            if (chattingUserData != null && chattingUserData.isAdmin()) {
+            if (chattingUserData.isAdmin()) {
+                System.out.println("여기 거리냐ㅋㅋㅋㅋㅋ");
                 sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
             } else {
-
-                System.out.println(chattingRoomData);
-                System.out.println(messageEvent);
+                System.out.println("여기 거리냐??");
                 sendEventToPerson(chattingRoomData.getAdminIdx(), messageEvent, chattingRoomData);
                 sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, chattingRoomData);
             }
         } else if (chattingRoomData.getChattingRoomType() == ChattingRoomType.APPROVAL) {
-            if (chattingUserData != null && chattingUserData.isAdmin()) {
+            if (chattingUserData.isAdmin()) {
                 sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
             } else {
                 // normal user : send approval request to admin
@@ -79,6 +84,8 @@ public class MessageService {
         if (room != null) {
             for (Long keyIndex : room.getInternalUsers()) {
                 ChattingUserData user = chattingUserService.getChattingUser(keyIndex);
+                System.out.println(user.toString());
+                System.out.println(userIdx);
                 if (userIdx == user.getUserIdx()) {
                     sendEventToPerson(keyIndex, messageEvent);
                 }
@@ -103,20 +110,6 @@ public class MessageService {
                 }
 
             }
-        }
-    }
-
-    public void sendMessageEvent(Long internalIdx, MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
-
-        if (messageEvent.getMessageEventType() == MessageEventType.ENTER_USER.getValue()) {
-            sendEventToRoom(internalIdx, messageEvent, false, chattingRoomData);
-        } else if (messageEvent.getMessageEventType() == MessageEventType.NORMAL_MSG.getValue()) {
-            //sendMessage(internalIdx, messageEvent);
-        } else if (messageEvent.getMessageEventType() == MessageEventType.DIRECT_MSG.getValue()) {
-            //messageEventService.sendEventToPerson(messageEvent.getToUserIdx(), messageEvent, getChattingRoom(messageEvent.getProgramIdx()));
-            //messageEventService.sendEventToPerson(internalIdx, messageEvent);
-        } else {
-            throw new Exception();
         }
     }
 

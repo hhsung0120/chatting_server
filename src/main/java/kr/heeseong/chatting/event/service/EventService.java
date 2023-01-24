@@ -80,6 +80,9 @@ public class EventService {
             throw new ChatRoomNotExistException();
         }
 
+        log.info("chattingRoomData : {}", chattingRoomData);
+        log.info("messageEvent : {}", messageEvent);
+
         messageEvent.setMessageEventType(0);
         messageService.sendGeneralMessage(messageEvent, chattingRoomData);
 

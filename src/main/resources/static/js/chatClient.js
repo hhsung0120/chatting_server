@@ -182,9 +182,6 @@ var ChatClient = function () {
     };
 
     var getNewEvent = function (callback) {
-        console.log("getNewEvent");
-        console.log(userInfo);
-        console.log("getNewEvent");
         if (userInfo.userIdx !== -1 && userInfo.chattingRoomSeq !== -1) {
             $.ajax({
                 method: "GET",
@@ -227,6 +224,7 @@ var ChatClient = function () {
             headers: userInfo,
             data: JSON.stringify(sendData)
         }).done(function (data) {
+            console.log(data)
             if (callback) {
                 callback(data);
             }

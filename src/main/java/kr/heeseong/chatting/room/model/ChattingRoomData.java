@@ -21,38 +21,20 @@ public class ChattingRoomData {
     private ConcurrentHashMap<Long, ChattingUser> users;
     private HashSet<Long> blockList = new HashSet<>();
 
-
-//    @JsonIgnore
-//    public Long getUserIdx() {
-//        if (chattingRoom != null) {
-//            return chattingRoom.getUserIdx();
-//        }
-//        return -1L;
-//    }
-
-//	@JsonIgnore
-//	public String getStatus() {
-//		if (chattingRoom != null) {
-//			return chattingRoom.getStatus();
-//		}
-//		return null;
-//	}
-
     @JsonIgnore
     public ChattingRoomType getChattingRoomType() throws BadArgumentException {
         if (chattingRoom != null) {
             return chattingRoom.getRoomType();
         }
-
         throw new BadArgumentException();
     }
 
     @JsonIgnore
-    public long getAdminIdx() {
+    public Long getAdminIdx() {
         if (chattingRoom != null) {
             return chattingRoom.getAdminIdx();
         }
-        return 0;
+        return null;
     }
 
     @JsonIgnore
@@ -77,7 +59,6 @@ public class ChattingRoomData {
         if (users == null) {
             users = new ConcurrentHashMap<>();
         }
-
         return users.keySet();
     }
 
@@ -96,7 +77,6 @@ public class ChattingRoomData {
         }
 
         users.remove(internalIdx);
-
         return 0;
     }
 

@@ -17,8 +17,6 @@ public class ChattingUserData {
 
     private ChattingUser chattingUser;
 
-    @Setter
-    private Long programIdx;
     private ArrayBlockingQueue<MessageEvent> messageQueue;
     private Long latestMessageTime;
     private Long DEFAULT_MESSAGE_TIMEOUT = 60 * 1000 * 2L; // 2 minutes
@@ -30,7 +28,7 @@ public class ChattingUserData {
         latestMessageTime = System.currentTimeMillis();
     }
 
-    public long getUserIdx() {
+    public Long getUserIdx() {
         return chattingUser.getUserIdx();
     }
 

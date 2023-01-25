@@ -182,6 +182,7 @@ var ChatClient = function () {
     };
 
     var getNewEvent = function (callback) {
+        console.log("getNewEvent")
         if (userInfo.userIdx !== -1 && userInfo.chattingRoomSeq !== -1) {
             $.ajax({
                 method: "GET",
@@ -198,6 +199,7 @@ var ChatClient = function () {
                     getNewEvent(callback);
                 }
             }).fail(function () {
+                console.log("여기 걸려 ?")
                 setTimeout(function () {
                     getNewEvent(callback);
                 }, 1000);
@@ -224,7 +226,9 @@ var ChatClient = function () {
             headers: userInfo,
             data: JSON.stringify(sendData)
         }).done(function (data) {
-            console.log(data)
+            console.log("send Message");
+            console.log(data);
+            console.log("send Message");
             if (callback) {
                 callback(data);
             }

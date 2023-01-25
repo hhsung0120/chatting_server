@@ -41,10 +41,8 @@ public class MessageService {
             sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
         } else if (chattingRoomData.getChattingRoomType() == ChattingRoomType.ONE_TO_MANY) {
             if (chattingUserData.isAdmin()) {
-                System.out.println("여기 거리냐ㅋㅋㅋㅋㅋ");
                 sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
             } else {
-                System.out.println("여기 거리냐??");
                 sendEventToPerson(chattingRoomData.getAdminIdx(), messageEvent, chattingRoomData);
                 sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, chattingRoomData);
             }
@@ -84,9 +82,7 @@ public class MessageService {
         if (room != null) {
             for (Long keyIndex : room.getInternalUsers()) {
                 ChattingUserData user = chattingUserService.getChattingUser(keyIndex);
-                System.out.println(user.toString());
-                System.out.println(userIdx);
-                if (userIdx == user.getUserIdx()) {
+                if (userIdx.equals(user.getUserIdx())) {
                     sendEventToPerson(keyIndex, messageEvent);
                 }
             }

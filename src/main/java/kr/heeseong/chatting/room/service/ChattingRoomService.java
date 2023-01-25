@@ -1,16 +1,9 @@
 package kr.heeseong.chatting.room.service;
 
-import kr.heeseong.chatting.eventenum.MessageEventType;
-import kr.heeseong.chatting.exceptions.BadArgumentException;
-import kr.heeseong.chatting.exceptions.ChatRoomNotExistException;
-import kr.heeseong.chatting.exceptions.UnauthorizedException;
 import kr.heeseong.chatting.exceptions.UserNotExistException;
-import kr.heeseong.chatting.message.service.MessageService;
 import kr.heeseong.chatting.room.model.ChattingRoom;
 import kr.heeseong.chatting.room.model.ChattingRoomData;
-import kr.heeseong.chatting.room.model.EventManager;
 import kr.heeseong.chatting.room.model.MessageEvent;
-import kr.heeseong.chatting.user.model.ChattingUser;
 import kr.heeseong.chatting.user.model.ChattingUserData;
 import kr.heeseong.chatting.user.service.ChattingUserService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,6 +27,7 @@ public class ChattingRoomService {
 
     /**
      * 채팅방 존재 확인
+     *
      * @param chattingRoomSeq
      * @return ChattingRoomData
      */
@@ -64,6 +57,7 @@ public class ChattingRoomService {
         return roomList;
     }
 
+    //room + userIdx 로변경되어야함
     public ArrayList<MessageEvent> getNewEvents(Long internalIdx) throws Exception {
         ChattingUserData user = chattingUserService.getChattingUser(internalIdx);
         if (user == null) {

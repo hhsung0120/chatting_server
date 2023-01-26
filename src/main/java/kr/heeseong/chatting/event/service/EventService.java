@@ -1,5 +1,6 @@
 package kr.heeseong.chatting.event.service;
 
+import kr.heeseong.chatting.eventenum.MessageEventType;
 import kr.heeseong.chatting.exceptions.BadArgumentException;
 import kr.heeseong.chatting.exceptions.ChatRoomNotExistException;
 import kr.heeseong.chatting.exceptions.UserExistException;
@@ -73,17 +74,15 @@ public class EventService {
         return chattingRoom;
     }
 
+    /**
+     * 유저가 센드로 보내는 일반 메시지
+     * @param messageEvent
+     * @return
+     * @throws Exception
+     */
     public MessageEvent sendGeneralMessage(MessageEvent messageEvent) throws Exception {
 
-        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(messageEvent.getChattingRoomSeq());
-        if (chattingRoomData == null) {
-            throw new ChatRoomNotExistException();
-        }
-
-        log.info("chattingRoomData : {}", chattingRoomData);
-        log.info("messageEvent : {}", messageEvent);
-
-        messageEvent.setMessageEventType(0);
+        ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
         messageService.sendGeneralMessage(messageEvent, chattingRoomData);
 
         return messageEvent;
@@ -91,12 +90,9 @@ public class EventService {
 
     public MessageEvent sendDirectEvent(MessageEvent messageEvent) throws Exception {
 
-        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(messageEvent.getChattingRoomSeq());
-        if (chattingRoomData == null) {
-            throw new ChatRoomNotExistException();
-        }
+        ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
 
-        messageEvent.setMessageEventType(1);
+        messageEvent.setEventType(MessageEventType.DIRECT_MSG);
         messageService.sendDirectMessage(messageEvent, chattingRoomData);
 
         return messageEvent;
@@ -104,12 +100,9 @@ public class EventService {
 
     public MessageEvent sendApproveMessage(MessageEvent messageEvent) throws ChatRoomNotExistException {
 
-        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(messageEvent.getChattingRoomSeq());
-        if (chattingRoomData == null) {
-            throw new ChatRoomNotExistException();
-        }
+        ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
 
-        messageEvent.setMessageEventType(5);
+        messageEvent.setEventType(MessageEventType.APPROVED_MSG);
         messageService.sendApproveMessage(messageEvent, chattingRoomData);
 
         return messageEvent;
@@ -117,12 +110,9 @@ public class EventService {
 
     public MessageEvent sendRejectMessage(MessageEvent messageEvent) throws ChatRoomNotExistException {
 
-        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(messageEvent.getChattingRoomSeq());
-        if (chattingRoomData == null) {
-            throw new ChatRoomNotExistException();
-        }
+        getChattingRoomData(messageEvent.getChattingRoomSeq());
 
-        messageEvent.setMessageEventType(6);
+        messageEvent.setEventType(MessageEventType.REJECTED_MSG);
         messageService.sendRejectMessage(messageEvent);
 
         return messageEvent;
@@ -130,52 +120,49 @@ public class EventService {
 
     public MessageEvent sendAdminMessage(MessageEvent messageEvent) throws ChatRoomNotExistException {
 
-        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(messageEvent.getChattingRoomSeq());
-        if (chattingRoomData == null) {
-            throw new ChatRoomNotExistException();
-        }
+        ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
 
-        messageEvent.setMessageEventType(2);
+        messageEvent.setEventType(MessageEventType.ADMIN_MSG);
         messageService.sendAdminMessage(messageEvent, chattingRoomData);
 
         return messageEvent;
     }
 
     public void addBlockUser(MessageEvent messageEvent) throws Exception {
-        chattingUserService.checkAdmin(messageEvent.getFromUserIdx());
 
-        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(messageEvent.getChattingRoomSeq());
-        if (chattingRoomData == null) {
-            throw new ChatRoomNotExistException();
-        }
+        ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
+
+        chattingUserService.checkAdmin(messageEvent.getFromUserIdx());
 
         chattingRoomData.addBlockList(messageEvent.getToUserIdx());
     }
 
     public void removeBlockUser(MessageEvent messageEvent) throws Exception {
-        chattingUserService.checkAdmin(messageEvent.getFromUserIdx());
 
-        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(messageEvent.getChattingRoomSeq());
-        if (chattingRoomData == null) {
-            throw new ChatRoomNotExistException();
-        }
+        ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
+
+        chattingUserService.checkAdmin(messageEvent.getFromUserIdx());
 
         chattingRoomData.removeBlockList(messageEvent.getToUserIdx());
     }
 
     public ArrayList<ChattingUser> chattingRoomUserList(Long chattingRoomSeq) throws Exception {
+
+        ChattingRoomData chattingRoomData = getChattingRoomData(chattingRoomSeq);
+
         ArrayList<ChattingUser> userList = new ArrayList<>();
-
-        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(chattingRoomSeq);
-        if (chattingRoomData == null) {
-            log.error("chattingRoomData is null / - chattingRoomSeq : {}", chattingRoomSeq);
-            throw new BadArgumentException();
-        }
-
         for (Map.Entry<Long, ChattingUser> userEntry : chattingRoomData.getUserList().entrySet()) {
             userList.add(userEntry.getValue());
         }
 
         return userList;
+    }
+
+    private ChattingRoomData getChattingRoomData(Long chattingRoomSeq) throws ChatRoomNotExistException {
+        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(chattingRoomSeq);
+        if (chattingRoomData == null) {
+            throw new ChatRoomNotExistException();
+        }
+        return chattingRoomData;
     }
 }

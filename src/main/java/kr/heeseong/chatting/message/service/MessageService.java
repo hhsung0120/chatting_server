@@ -20,41 +20,41 @@ public class MessageService {
 
     private final ChattingUserService chattingUserService;
 
-    //2023-01-13 정리
     public void sendGeneralMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
 
+        messageEvent.setEventType(MessageEventType.NORMAL_MSG);
         Long fromUserIdx = messageEvent.getFromUserIdx();
-        ChattingUserData chattingUserData = chattingUserService.getChattingUser(fromUserIdx);
 
+        ChattingUserData chattingUserData = chattingUserService.getChattingUser(fromUserIdx);
         if (chattingUserData == null) {
             log.error("chattingUserData is null / fromUserIdx : {}", fromUserIdx);
             throw new UserNotExistException();
         }
 
         if (chattingRoomData.isBlockUser(messageEvent.getFromUserIdx())) {
-            messageEvent.setMessageEventType(MessageEventType.BLOCKED_MSG.getValue());
+            messageEvent.setEventType(MessageEventType.BLOCKED_MSG);
             sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent);
             return;
         }
 
         if (chattingRoomData.getChattingRoomType() == ChattingRoomType.MANY_TO_MANY) {
-            sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
+            sendEventToRoom(messageEvent, true, chattingRoomData);
         } else if (chattingRoomData.getChattingRoomType() == ChattingRoomType.ONE_TO_MANY) {
             if (chattingUserData.isAdmin()) {
-                sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
+                sendEventToRoom(messageEvent, true, chattingRoomData);
             } else {
                 sendEventToPerson(chattingRoomData.getAdminIdx(), messageEvent, chattingRoomData);
                 sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, chattingRoomData);
             }
         } else if (chattingRoomData.getChattingRoomType() == ChattingRoomType.APPROVAL) {
             if (chattingUserData.isAdmin()) {
-                sendEventToRoom(fromUserIdx, messageEvent, true, chattingRoomData);
+                sendEventToRoom(messageEvent, true, chattingRoomData);
             } else {
                 // normal user : send approval request to admin
-                messageEvent.setMessageEventType(MessageEventType.REQ_APPROVAL_MSG.getValue());
+                messageEvent.setEventType(MessageEventType.REQ_APPROVAL_MSG);
                 sendEventToPerson(chattingRoomData.getAdminIdx(), messageEvent, chattingRoomData);
                 MessageEvent waitMessageEventOld = EventManager.cloneEvent(messageEvent);
-                waitMessageEventOld.setMessageEventType(MessageEventType.WAIT_APPROVAL_MSG.getValue());
+                waitMessageEventOld.setEventType(MessageEventType.WAIT_APPROVAL_MSG);
                 sendEventToPerson(waitMessageEventOld.getFromUserIdx(), waitMessageEventOld, chattingRoomData);
             }
         } else {
@@ -70,12 +70,12 @@ public class MessageService {
     public void sendApproveMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) {
         sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, chattingRoomData);
         MessageEvent newMessageEvent = EventManager.cloneEvent(messageEvent);
-        newMessageEvent.setMessageEventType(MessageEventType.NORMAL_MSG.getValue());
-        sendEventToRoom(messageEvent.getFromUserIdx(), newMessageEvent, true, chattingRoomData);
+        newMessageEvent.setEventType(MessageEventType.NORMAL_MSG);
+        sendEventToRoom(newMessageEvent, true, chattingRoomData);
     }
 
     public void sendEnterUserMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) {
-        sendEventToRoom(messageEvent.getFromUserIdx(), messageEvent, false, chattingRoomData);
+        sendEventToRoom(messageEvent, false, chattingRoomData);
     }
 
     public void sendEventToPerson(Long userIdx, MessageEvent messageEvent, ChattingRoomData room) {
@@ -109,10 +109,10 @@ public class MessageService {
         }
     }
 
-    private void sendEventToRoom(Long internalIdx, MessageEvent messageEvent, Boolean sendMyself, ChattingRoomData chattingRoomData) {
+    private void sendEventToRoom(MessageEvent messageEvent, Boolean sendMyself, ChattingRoomData chattingRoomData) {
         if (chattingRoomData != null) {
             for (Long keyIndex : chattingRoomData.getInternalUsers()) {
-                if (sendMyself || (internalIdx != keyIndex)) {
+                if (sendMyself || (messageEvent.getFromUserIdx() != keyIndex)) {
                     ChattingUserData user = chattingUserService.getChattingUser(keyIndex);
                     if (user != null) {
                         user.postMessage(messageEvent);
@@ -127,6 +127,6 @@ public class MessageService {
     }
 
     public void sendAdminMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) {
-        sendEventToRoom(messageEvent.getFromUserIdx(), messageEvent, true, chattingRoomData);
+        sendEventToRoom(messageEvent, true, chattingRoomData);
     }
 }

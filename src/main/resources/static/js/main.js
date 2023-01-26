@@ -173,11 +173,11 @@ var processEvents = function(events) {
 			console.log("event")
 			console.log(event)
 			console.log("event")
-			switch(event.messageEventType) {
+			switch(event.eventType) {
 				case eventType.NORMAL_MSG:
 					//관리자 화면 admin 일때 자기 자신 아이콘 안보임 (웹적용)
 					console.log("일단 여기");
-					console.log(userInfo);
+					console.log(eventType.NORMAL_MSG);
 					if(event.fromUserIdx==userInfo.userMessageIdx && event.userName == 'admin'){
 						$('#chat-messages').append('<li class="admin"><div class="clear"><p class="name fl">'+"Admin"/*event.userName*/+'</p>'+
 							'<div class="fr">'+

@@ -105,11 +105,11 @@ class ChattingUserDataTest {
         System.out.println(chattingUsers.size());
         System.out.println(chattingUsers);
 
-        MessageEvent messageEvent1 = new MessageEvent(0, null, null, 126L, "userName_1", "1번유저 메시지 입니다.", "1번 유저 아이디");
-        MessageEvent messageEvent2 = new MessageEvent(0, null, null, 126L, "userName_1", "1번유저 메시지-2 입니다.", "1번 유저 아이디");
+//        MessageEvent messageEvent1 = new MessageEvent(0, null, null, 126L, "userName_1", "1번유저 메시지 입니다.", "1번 유저 아이디");
+//        MessageEvent messageEvent2 = new MessageEvent(0, null, null, 126L, "userName_1", "1번유저 메시지-2 입니다.", "1번 유저 아이디");
 
-        messageQueue.add(messageEvent1);
-        messageQueue.add(messageEvent2);
+//        messageQueue.add(messageEvent1);
+//        messageQueue.add(messageEvent2);
 
         ArrayList<MessageEvent> messageEvents = new ArrayList<>();
         try {

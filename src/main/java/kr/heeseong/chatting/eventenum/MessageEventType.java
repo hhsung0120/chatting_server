@@ -25,10 +25,6 @@ public enum MessageEventType {
     private int value;
     private String textValue;
 
-    MessageEventType(int value){
-        this.value = value;
-    }
-
     MessageEventType(int value, String textValue){
         this.value = value;
         this.textValue = textValue;

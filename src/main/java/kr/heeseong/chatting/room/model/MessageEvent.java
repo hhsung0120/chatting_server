@@ -12,10 +12,8 @@ public class MessageEvent {
 
     @Setter
     private Long idx;
-
     @Setter
-    private int messageEventType;
-    private Long programIdx;
+    private MessageEventType eventType;
     private Long fromUserIdx;
     private Long toUserIdx;
     private String userId;
@@ -29,8 +27,6 @@ public class MessageEvent {
     @Builder
     public MessageEvent(Long idx, int messageEventType, Long programIdx, Long fromUserIdx, Long toUserIdx, String userId, String userName, String message) {
         this.idx = idx;
-        this.messageEventType = messageEventType;
-        this.programIdx = programIdx;
         this.fromUserIdx = fromUserIdx;
         this.toUserIdx = toUserIdx;
         this.userId = userId;
@@ -38,19 +34,9 @@ public class MessageEvent {
         this.message = message;
     }
 
-    public MessageEvent(int messageEventType, Long programIdx, Long toUserIdx, Long fromUserIdx, String userName, String msg, String userId) {
-        this.messageEventType = messageEventType;
-        this.programIdx = programIdx;
-        this.fromUserIdx = fromUserIdx;
-        this.toUserIdx = toUserIdx;
-        this.userId = userId;
-        this.userName = userName;
-        this.message = msg;
-    }
-
+    @Builder(builderClassName = "createRoomBuilder", builderMethodName = "createRoomBuilder")
     public MessageEvent(ChattingRoom chattingRoom) {
-        this.messageEventType = MessageEventType.ENTER_USER.getValue();
-        this.programIdx = chattingRoom.getChattingRoomSeq();
+        this.eventType = MessageEventType.ENTER_USER;
         this.toUserIdx = 0L;
         this.fromUserIdx = chattingRoom.getUserIdx();
         this.userId = chattingRoom.getUserId();

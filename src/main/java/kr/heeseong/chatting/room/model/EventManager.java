@@ -26,26 +26,24 @@ public class EventManager {
 //                .build();
 //    }
 
-    public static MessageEvent makeLeaveRoomEvent(Long programIdx, long userIdx) {
-        return MessageEvent.builder()
-                .messageEventType(MessageEventType.LEAVE_USER.getValue())
-                .programIdx(programIdx)
-                .fromUserIdx(userIdx)
-                .build();
-    }
-
-    public static MessageEvent removeChatRoomEvent(Long roomIdx) {
-        return MessageEvent.builder()
-                .messageEventType(MessageEventType.REMOVE_CHATROOM.getValue())
-                .programIdx(roomIdx)
-                .build();
-    }
+//    public static MessageEvent makeLeaveRoomEvent(Long programIdx, long userIdx) {
+//        return MessageEvent.builder()
+//                .messageEventType(MessageEventType.LEAVE_USER.getValue())
+//                .programIdx(programIdx)
+//                .fromUserIdx(userIdx)
+//                .build();
+//    }
+//
+//    public static MessageEvent removeChatRoomEvent(Long roomIdx) {
+//        return MessageEvent.builder()
+//                .messageEventType(MessageEventType.REMOVE_CHATROOM.getValue())
+//                .programIdx(roomIdx)
+//                .build();
+//    }
 
     public static MessageEvent cloneEvent(MessageEvent messageEventOld) {
         return MessageEvent.builder()
-                .programIdx(messageEventOld.getProgramIdx())
                 .fromUserIdx(messageEventOld.getFromUserIdx())
-                .messageEventType(messageEventOld.getMessageEventType())
                 .userId(messageEventOld.getUserId())
                 .userName(messageEventOld.getUserName())
                 .toUserIdx(messageEventOld.getToUserIdx())

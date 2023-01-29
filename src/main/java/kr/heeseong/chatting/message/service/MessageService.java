@@ -110,13 +110,11 @@ public class MessageService {
     }
 
     private void sendEventToRoom(MessageEvent messageEvent, Boolean sendMyself, ChattingRoomData chattingRoomData) {
-        if (chattingRoomData != null) {
-            for (Long keyIndex : chattingRoomData.getInternalUsers()) {
-                if (sendMyself || (messageEvent.getFromUserIdx() != keyIndex)) {
-                    ChattingUserData user = chattingUserService.getChattingUser(keyIndex);
-                    if (user != null) {
-                        user.postMessage(messageEvent);
-                    }
+        for (Long keyIndex : chattingRoomData.getInternalUsers()) {
+            if (sendMyself || (messageEvent.getFromUserIdx() != keyIndex)) {
+                ChattingUserData user = chattingUserService.getChattingUser(keyIndex);
+                if (user != null) {
+                    user.postMessage(messageEvent);
                 }
             }
         }

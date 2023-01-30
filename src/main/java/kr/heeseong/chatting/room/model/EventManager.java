@@ -41,13 +41,13 @@ public class EventManager {
 //                .build();
 //    }
 
-    public static MessageEvent cloneEvent(MessageEvent messageEventOld) {
-        return MessageEvent.builder()
-                .fromUserIdx(messageEventOld.getFromUserIdx())
-                .userId(messageEventOld.getUserId())
-                .userName(messageEventOld.getUserName())
-                .toUserIdx(messageEventOld.getToUserIdx())
-                .message(messageEventOld.getMessage())
-                .build();
-    }
+//    public static MessageEvent cloneEvent(MessageEvent messageEventOld) {
+//        return MessageEvent.builder()
+//                .fromUserIdx(messageEventOld.getFromUserIdx())
+//                .userId(messageEventOld.getUserId())
+//                .userName(messageEventOld.getUserName())
+//                .toUserIdx(messageEventOld.getToUserIdx())
+//                .message(messageEventOld.getMessage())
+//                .build();
+//    }
 }

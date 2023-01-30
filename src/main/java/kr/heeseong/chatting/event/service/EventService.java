@@ -1,7 +1,6 @@
 package kr.heeseong.chatting.event.service;
 
 import kr.heeseong.chatting.eventenum.MessageEventType;
-import kr.heeseong.chatting.exceptions.BadArgumentException;
 import kr.heeseong.chatting.exceptions.ChatRoomNotExistException;
 import kr.heeseong.chatting.exceptions.UserExistException;
 import kr.heeseong.chatting.message.service.MessageService;
@@ -76,6 +75,7 @@ public class EventService {
 
     /**
      * 유저가 센드로 보내는 일반 메시지
+     *
      * @param messageEvent
      * @return
      * @throws Exception
@@ -98,7 +98,7 @@ public class EventService {
         return messageEvent;
     }
 
-    public MessageEvent sendApproveMessage(MessageEvent messageEvent) throws ChatRoomNotExistException {
+    public MessageEvent sendApproveMessage(MessageEvent messageEvent) throws Exception {
 
         ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
 
@@ -108,7 +108,7 @@ public class EventService {
         return messageEvent;
     }
 
-    public MessageEvent sendRejectMessage(MessageEvent messageEvent) throws ChatRoomNotExistException {
+    public MessageEvent sendRejectMessage(MessageEvent messageEvent) throws Exception {
 
         getChattingRoomData(messageEvent.getChattingRoomSeq());
 
@@ -118,7 +118,7 @@ public class EventService {
         return messageEvent;
     }
 
-    public MessageEvent sendAdminMessage(MessageEvent messageEvent) throws ChatRoomNotExistException {
+    public MessageEvent sendAdminMessage(MessageEvent messageEvent) throws Exception {
 
         ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
 

@@ -1,6 +1,7 @@
 package kr.heeseong.chatting.user.service;
 
 import kr.heeseong.chatting.exceptions.UnauthorizedException;
+import kr.heeseong.chatting.exceptions.UserNotExistException;
 import kr.heeseong.chatting.user.model.ChattingUser;
 import kr.heeseong.chatting.user.model.ChattingUserData;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +19,15 @@ public class ChattingUserService {
     //채팅 유저 리스트
     private ConcurrentHashMap<Long, ChattingUserData> chattingUsers = new ConcurrentHashMap<>();
 
-    public ChattingUserData getChattingUser(Long userSeq) {
-        return chattingUsers.get(userSeq);
+    public ChattingUserData getChattingUser(Long userSeq) throws UserNotExistException {
+
+        ChattingUserData chattingUserData = chattingUsers.get(userSeq);
+        if (chattingUserData == null) {
+            log.error("chattingUserData is null / userSeq : {}", userSeq);
+            throw new UserNotExistException();
+        }
+
+        return chattingUserData;
     }
 
     public ConcurrentHashMap<Long, ChattingUserData> getChattingUsers() {
@@ -27,6 +35,7 @@ public class ChattingUserService {
     }
 
     public ChattingUserData setChattingUser(ChattingUser chattingUser) {
+
         WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUser));
         ChattingUserData chattingUserData = userRef.get();
 

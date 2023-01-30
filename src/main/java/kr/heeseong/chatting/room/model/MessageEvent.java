@@ -24,16 +24,6 @@ public class MessageEvent {
     public MessageEvent() {
     }
 
-    @Builder
-    public MessageEvent(Long idx, int messageEventType, Long programIdx, Long fromUserIdx, Long toUserIdx, String userId, String userName, String message) {
-        this.idx = idx;
-        this.fromUserIdx = fromUserIdx;
-        this.toUserIdx = toUserIdx;
-        this.userId = userId;
-        this.userName = userName;
-        this.message = message;
-    }
-
     @Builder(builderClassName = "createRoomBuilder", builderMethodName = "createRoomBuilder")
     public MessageEvent(ChattingRoom chattingRoom) {
         this.eventType = MessageEventType.ENTER_USER;
@@ -42,5 +32,15 @@ public class MessageEvent {
         this.userId = chattingRoom.getUserId();
         this.userName = chattingRoom.getUserName();
         this.chattingRoomSeq = chattingRoom.getChattingRoomSeq();
+    }
+
+    @Builder(builderClassName = "waitApprovalMessageEventBuilder", builderMethodName = "waitApprovalMessageEventBuilder")
+    public MessageEvent(MessageEvent waitApprovalMessage) {
+        this.fromUserIdx = waitApprovalMessage.getFromUserIdx();
+        this.userId = waitApprovalMessage.getUserId();
+        this.userName = waitApprovalMessage.getUserName();
+        this.toUserIdx = waitApprovalMessage.getToUserIdx();
+        this.message = waitApprovalMessage.getMessage();
+        this.eventType = MessageEventType.WAIT_APPROVAL_MSG;
     }
 }

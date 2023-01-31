@@ -4,7 +4,6 @@ import kr.heeseong.chatting.eventenum.ChattingRoomType;
 import kr.heeseong.chatting.eventenum.MessageEventType;
 import kr.heeseong.chatting.exceptions.BadArgumentException;
 import kr.heeseong.chatting.room.model.ChattingRoomData;
-import kr.heeseong.chatting.room.model.EventManager;
 import kr.heeseong.chatting.room.model.MessageEvent;
 import kr.heeseong.chatting.user.model.ChattingUserData;
 import kr.heeseong.chatting.user.service.ChattingUserService;
@@ -48,14 +47,6 @@ public class MessageService {
 
         if (chattingRoomData.getChattingRoomType() == ChattingRoomType.APPROVAL) {
             sendApprovalRequestMessageToAdmin(chattingRoomData, messageEvent);
-
-//            messageEvent.setEventType(MessageEventType.REQ_APPROVAL_MSG);
-//            sendMessageToAdmin(chattingRoomData, messageEvent);
-//            //sendEventToPerson(chattingRoomData.getAdminIdx(), messageEvent, chattingRoomData);
-//
-//            MessageEvent waitMessageEventOld = EventManager.cloneEvent(messageEvent);
-//            waitMessageEventOld.setEventType(MessageEventType.WAIT_APPROVAL_MSG);
-//            sendEventToPerson(waitMessageEventOld.getFromUserIdx(), waitMessageEventOld, chattingRoomData);
             return;
         }
 
@@ -69,12 +60,13 @@ public class MessageService {
 
     public void sendApproveMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
         sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, chattingRoomData);
-//        MessageEvent newMessageEvent = EventManager.cloneEvent(messageEvent);
-//        newMessageEvent.setEventType(MessageEventType.NORMAL_MSG);
-//        sendEventToRoom(newMessageEvent, true, chattingRoomData);
+
+        MessageEvent newMessageEvent = MessageEvent.setMessageCloneEvent(messageEvent, MessageEventType.NORMAL_MSG);
+        sendMessageToAllUsers(chattingRoomData, newMessageEvent);
     }
 
     public void sendEnterUserMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
+//        sendMessageToAllUsers(chattingRoomData, messageEvent);
         sendEventToRoom(messageEvent, false, chattingRoomData);
     }
 
@@ -109,9 +101,7 @@ public class MessageService {
                 sendEventToPerson(keyIndex, messageEvent);
             } else {
                 if (user.getUserIdx().equals(messageEvent.getFromUserIdx())) {
-                    MessageEvent myMessage = MessageEvent.waitApprovalMessageEventBuilder()
-                            .waitApprovalMessage(messageEvent)
-                            .build();
+                    MessageEvent myMessage = MessageEvent.setMessageCloneEvent(messageEvent, MessageEventType.WAIT_APPROVAL_MSG);
                     sendEventToPerson(keyIndex, myMessage);
                 }
             }
@@ -142,7 +132,6 @@ public class MessageService {
                         e.printStackTrace();
                     }
                 }
-
             }
         }
     }
@@ -179,6 +168,6 @@ public class MessageService {
     }
 
     public void sendAdminMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
-        sendEventToRoom(messageEvent, true, chattingRoomData);
+        sendMessageToAllUsers(chattingRoomData, messageEvent);
     }
 }

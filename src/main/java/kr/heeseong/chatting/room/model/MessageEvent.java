@@ -27,20 +27,26 @@ public class MessageEvent {
     @Builder(builderClassName = "createRoomBuilder", builderMethodName = "createRoomBuilder")
     public MessageEvent(ChattingRoom chattingRoom) {
         this.eventType = MessageEventType.ENTER_USER;
-        this.toUserIdx = 0L;
         this.fromUserIdx = chattingRoom.getUserIdx();
         this.userId = chattingRoom.getUserId();
         this.userName = chattingRoom.getUserName();
         this.chattingRoomSeq = chattingRoom.getChattingRoomSeq();
     }
 
+    public static MessageEvent setMessageCloneEvent(MessageEvent waitApprovalMessage, MessageEventType eventType){
+        return MessageEvent.waitApprovalMessageEventBuilder()
+                .waitApprovalMessage(waitApprovalMessage)
+                .eventType(eventType)
+                .build();
+    }
+
     @Builder(builderClassName = "waitApprovalMessageEventBuilder", builderMethodName = "waitApprovalMessageEventBuilder")
-    public MessageEvent(MessageEvent waitApprovalMessage) {
+    public MessageEvent(MessageEvent waitApprovalMessage, MessageEventType eventType) {
         this.fromUserIdx = waitApprovalMessage.getFromUserIdx();
         this.userId = waitApprovalMessage.getUserId();
         this.userName = waitApprovalMessage.getUserName();
         this.toUserIdx = waitApprovalMessage.getToUserIdx();
         this.message = waitApprovalMessage.getMessage();
-        this.eventType = MessageEventType.WAIT_APPROVAL_MSG;
+        this.eventType = eventType;
     }
 }

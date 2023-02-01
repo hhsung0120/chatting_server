@@ -18,6 +18,13 @@ public class MessageService {
 
     private final ChattingUserService chattingUserService;
 
+    /**
+     * 일반 메시지, 유저가 send 로 보내는 메시지
+     *
+     * @param messageEvent
+     * @param chattingRoomData
+     * @throws Exception
+     */
     public void sendGeneralMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
 
         messageEvent.setEventType(MessageEventType.NORMAL_MSG);
@@ -31,7 +38,7 @@ public class MessageService {
 
         if (chattingRoomData.isBlockUser(messageEvent.getFromUserIdx())) {
             messageEvent.setEventType(MessageEventType.BLOCKED_MSG);
-            sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent);
+            sendMessageToPerson(messageEvent.getFromUserIdx(), messageEvent);
             return;
         }
 
@@ -53,21 +60,40 @@ public class MessageService {
         throw new BadArgumentException();
     }
 
-    public void sendDirectMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
-        sendEventToPerson(messageEvent.getToUserIdx(), messageEvent, chattingRoomData);
-        sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent);
+    /**
+     * 1:1 귓속말 기능
+     *
+     * @param messageEvent
+     * @throws Exception
+     */
+    public void sendDirectMessage(MessageEvent messageEvent) throws Exception {
+        sendMessageToPerson(messageEvent.getToUserIdx(), messageEvent);
+        sendMessageToPerson(messageEvent.getFromUserIdx(), messageEvent);
     }
 
+    /**
+     * 승인 완료 된 메시지 전체 유저에게 전송
+     *
+     * @param messageEvent
+     * @param chattingRoomData
+     * @throws Exception
+     */
     public void sendApproveMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
-        sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent, chattingRoomData);
+        sendMessageToPerson(messageEvent.getFromUserIdx(), messageEvent);
 
         MessageEvent newMessageEvent = MessageEvent.setMessageCloneEvent(messageEvent, MessageEventType.NORMAL_MSG);
         sendMessageToAllUsers(chattingRoomData, newMessageEvent);
     }
 
+    /**
+     * 방 입장 알림
+     *
+     * @param messageEvent
+     * @param chattingRoomData
+     * @throws Exception
+     */
     public void sendEnterUserMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
-//        sendMessageToAllUsers(chattingRoomData, messageEvent);
-        sendEventToRoom(messageEvent, false, chattingRoomData);
+        sendMessageToRoom(chattingRoomData, messageEvent);
     }
 
     /**
@@ -78,10 +104,9 @@ public class MessageService {
      * @throws Exception
      */
     public void sendMessageToAdmin(ChattingRoomData room, MessageEvent messageEvent) throws Exception {
-        for (Long keyIndex : room.getInternalUsers()) {
-            ChattingUserData user = chattingUserService.getChattingUser(keyIndex);
-            if (user.getUserIdx().equals(messageEvent.getFromUserIdx()) || user.getUserIdx().equals(room.getAdminIdx())) {
-                sendEventToPerson(keyIndex, messageEvent);
+        for (Long userSeq : room.getInternalUsers()) {
+            if (userSeq.equals(messageEvent.getFromUserIdx()) || userSeq.equals(room.getAdminIdx())) {
+                sendMessageToPerson(userSeq, messageEvent);
             }
         }
     }
@@ -94,43 +119,15 @@ public class MessageService {
      * @throws Exception
      */
     public void sendApprovalRequestMessageToAdmin(ChattingRoomData room, MessageEvent messageEvent) throws Exception {
-        for (Long keyIndex : room.getInternalUsers()) {
-            ChattingUserData user = chattingUserService.getChattingUser(keyIndex);
+        for (Long userSeq : room.getInternalUsers()) {
+            ChattingUserData user = chattingUserService.getChattingUser(userSeq);
             if (user.isAdmin()) {
                 messageEvent.setEventType(MessageEventType.REQ_APPROVAL_MSG);
-                sendEventToPerson(keyIndex, messageEvent);
+                sendMessageToPerson(userSeq, messageEvent);
             } else {
                 if (user.getUserIdx().equals(messageEvent.getFromUserIdx())) {
                     MessageEvent myMessage = MessageEvent.setMessageCloneEvent(messageEvent, MessageEventType.WAIT_APPROVAL_MSG);
-                    sendEventToPerson(keyIndex, myMessage);
-                }
-            }
-        }
-    }
-
-    public void sendEventToPerson(Long userIdx, MessageEvent messageEvent, ChattingRoomData room) throws Exception {
-        for (Long keyIndex : room.getInternalUsers()) {
-            ChattingUserData user = chattingUserService.getChattingUser(keyIndex);
-            if (userIdx.equals(user.getUserIdx())) {
-                sendEventToPerson(keyIndex, messageEvent);
-            }
-        }
-    }
-
-    public void sendEventToPerson(Long internalIdx, MessageEvent messageEvent) throws Exception {
-        ChattingUserData user = chattingUserService.getChattingUser(internalIdx);
-        if (user != null) {
-            try {
-                user.postMessage(messageEvent);
-            } catch (Exception e) {
-                log.error("sendEventToPerson exception : {}", e.getMessage());
-                if (user.checkTimeOut()) {
-                    try {
-                        //순환참조 에러 때문에 잠시 주석 해둠 오류를 스로우해서 호출한 room 서비스에서 리이브 하도록 처리하자
-                        //chattingRoomService.leaveChatRoom(internalIdx, user.getProgramIdx(), null);
-                    } catch (Exception ex) {
-                        e.printStackTrace();
-                    }
+                    sendMessageToPerson(userSeq, myMessage);
                 }
             }
         }
@@ -144,30 +141,75 @@ public class MessageService {
      * @throws Exception
      */
     private void sendMessageToAllUsers(ChattingRoomData chattingRoomData, MessageEvent messageEvent) throws Exception {
-        for (Long keyIndex : chattingRoomData.getInternalUsers()) {
-            ChattingUserData user = chattingUserService.getChattingUser(keyIndex);
-            if (user != null) {
-                user.postMessage(messageEvent);
-            }
+        for (Long userSeq : chattingRoomData.getInternalUsers()) {
+            sendMessageToPerson(userSeq, messageEvent);
         }
     }
 
-    private void sendEventToRoom(MessageEvent messageEvent, Boolean sendMyself, ChattingRoomData chattingRoomData) throws Exception {
-        for (Long keyIndex : chattingRoomData.getInternalUsers()) {
-            if (sendMyself || (messageEvent.getFromUserIdx() != keyIndex)) {
-                ChattingUserData user = chattingUserService.getChattingUser(keyIndex);
-                if (user != null) {
-                    user.postMessage(messageEvent);
-                }
-            }
-        }
-    }
-
+    /**
+     * 유저의 승인 요청 메시지를 거절
+     * 유저에게 알려줌
+     *
+     * @param messageEvent
+     * @throws Exception
+     */
     public void sendRejectMessage(MessageEvent messageEvent) throws Exception {
-        sendEventToPerson(messageEvent.getFromUserIdx(), messageEvent);
+        //TODO 관리자 인지 검사 해야지 .. ?
+        ChattingUserData user = chattingUserService.getChattingUser(messageEvent.getFromUserIdx());
+        user.postMessage(messageEvent);
     }
 
+    /**
+     * 방 관리자 -> 모든 유저에게 전체 메시지
+     *
+     * @param messageEvent
+     * @param chattingRoomData
+     * @throws Exception
+     */
     public void sendAdminMessage(MessageEvent messageEvent, ChattingRoomData chattingRoomData) throws Exception {
         sendMessageToAllUsers(chattingRoomData, messageEvent);
+    }
+
+
+    /**
+     * 방 입장 알림
+     *
+     * @param chattingRoomData
+     * @param messageEvent
+     * @throws Exception
+     */
+    private void sendMessageToRoom(ChattingRoomData chattingRoomData, MessageEvent messageEvent) throws Exception {
+        for (Long userSeq : chattingRoomData.getInternalUsers()) {
+            if (messageEvent.getFromUserIdx() != userSeq) {
+                sendMessageToPerson(userSeq, messageEvent);
+            }
+        }
+    }
+
+    /**
+     * 해당 유저의 큐에 메시지를 실제로 담는 로직
+     *
+     * @param userSeq
+     * @param messageEvent
+     * @throws Exception
+     */
+    private void sendMessageToPerson(Long userSeq, MessageEvent messageEvent) throws Exception {
+        ChattingUserData user = chattingUserService.getChattingUser(userSeq);
+        user.postMessage(messageEvent);
+//        if (user != null) {
+//            try {
+//                user.postMessage(messageEvent);
+//            } catch (Exception e) {
+//                log.error("sendEventToPerson exception : {}", e.getMessage());
+//                if (user.checkTimeOut()) {
+//                    try {
+//                        //순환참조 에러 때문에 잠시 주석 해둠 오류를 스로우해서 호출한 room 서비스에서 리이브 하도록 처리하자
+//                        //chattingRoomService.leaveChatRoom(internalIdx, user.getProgramIdx(), null);
+//                    } catch (Exception ex) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
     }
 }

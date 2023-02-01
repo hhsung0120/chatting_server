@@ -49,14 +49,19 @@ public class EventService {
         return chattingRoom;
     }
 
+    /**
+     * 채팅 방 입장
+     *
+     * @param chattingRoom
+     * @return
+     * @throws Exception
+     */
     public ChattingRoom enterChattingRoom(ChattingRoom chattingRoom) throws Exception {
-        //채팅 방 존재 확인
         ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(chattingRoom.getChattingRoomSeq());
         if (chattingRoomData == null) {
             chattingRoomData = chattingRoomService.createChattingRoom(chattingRoom);
         }
 
-        //채팅방 유저 셋팅
         ChattingUserData chattingUserData;
         try {
             chattingUserData = chattingUserService.setChattingUser(chattingRoom.getChattingUser());
@@ -88,16 +93,30 @@ public class EventService {
         return messageEvent;
     }
 
+    /**
+     * 유저 -> 유저 다이렉트로 보내는 1:1 메시지
+     *
+     * @param messageEvent
+     * @return
+     * @throws Exception
+     */
     public MessageEvent sendDirectEvent(MessageEvent messageEvent) throws Exception {
 
-        ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
+        checkRoomExistence(messageEvent.getChattingRoomSeq());
 
         messageEvent.setEventType(MessageEventType.DIRECT_MSG);
-        messageService.sendDirectMessage(messageEvent, chattingRoomData);
+        messageService.sendDirectMessage(messageEvent);
 
         return messageEvent;
     }
 
+    /**
+     * 메시지 승인 완료 된 메시지 전달
+     *
+     * @param messageEvent
+     * @return
+     * @throws Exception
+     */
     public MessageEvent sendApproveMessage(MessageEvent messageEvent) throws Exception {
 
         ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
@@ -108,9 +127,16 @@ public class EventService {
         return messageEvent;
     }
 
+    /**
+     * 승인 요청 메시지 거절 메시지
+     *
+     * @param messageEvent
+     * @return
+     * @throws Exception
+     */
     public MessageEvent sendRejectMessage(MessageEvent messageEvent) throws Exception {
 
-        getChattingRoomData(messageEvent.getChattingRoomSeq());
+        checkRoomExistence(messageEvent.getChattingRoomSeq());
 
         messageEvent.setEventType(MessageEventType.REJECTED_MSG);
         messageService.sendRejectMessage(messageEvent);
@@ -118,6 +144,13 @@ public class EventService {
         return messageEvent;
     }
 
+    /**
+     * 관리자 -> 유저 전체 메시지
+     *
+     * @param messageEvent
+     * @return
+     * @throws Exception
+     */
     public MessageEvent sendAdminMessage(MessageEvent messageEvent) throws Exception {
 
         ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
@@ -128,6 +161,12 @@ public class EventService {
         return messageEvent;
     }
 
+    /**
+     * 유저 차단
+     *
+     * @param messageEvent
+     * @throws Exception
+     */
     public void addBlockUser(MessageEvent messageEvent) throws Exception {
 
         ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
@@ -137,6 +176,12 @@ public class EventService {
         chattingRoomData.addBlockList(messageEvent.getToUserIdx());
     }
 
+    /**
+     * 차단 해제
+     *
+     * @param messageEvent
+     * @throws Exception
+     */
     public void removeBlockUser(MessageEvent messageEvent) throws Exception {
 
         ChattingRoomData chattingRoomData = getChattingRoomData(messageEvent.getChattingRoomSeq());
@@ -146,6 +191,13 @@ public class EventService {
         chattingRoomData.removeBlockList(messageEvent.getToUserIdx());
     }
 
+    /**
+     * 채팅방 유저 목록
+     *
+     * @param chattingRoomSeq
+     * @return
+     * @throws Exception
+     */
     public ArrayList<ChattingUser> chattingRoomUserList(Long chattingRoomSeq) throws Exception {
 
         ChattingRoomData chattingRoomData = getChattingRoomData(chattingRoomSeq);
@@ -158,11 +210,32 @@ public class EventService {
         return userList;
     }
 
+    /**
+     * 채팅 방 정보
+     *
+     * @param chattingRoomSeq
+     * @return
+     * @throws ChatRoomNotExistException
+     */
     private ChattingRoomData getChattingRoomData(Long chattingRoomSeq) throws ChatRoomNotExistException {
         ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(chattingRoomSeq);
         if (chattingRoomData == null) {
             throw new ChatRoomNotExistException();
         }
+
         return chattingRoomData;
+    }
+
+    /**
+     * 채팅방 존재 확인
+     *
+     * @param chattingRoomSeq
+     * @throws ChatRoomNotExistException
+     */
+    private void checkRoomExistence(Long chattingRoomSeq) throws ChatRoomNotExistException {
+        ChattingRoomData chattingRoomData = chattingRoomService.getChattingRoom(chattingRoomSeq);
+        if (chattingRoomData == null) {
+            throw new ChatRoomNotExistException();
+        }
     }
 }

@@ -19,6 +19,13 @@ public class ChattingUserService {
     //채팅 유저 리스트
     private ConcurrentHashMap<Long, ChattingUserData> chattingUsers = new ConcurrentHashMap<>();
 
+    /**
+     * 채팅 유저 조회
+     *
+     * @param userSeq
+     * @return
+     * @throws UserNotExistException
+     */
     public ChattingUserData getChattingUser(Long userSeq) throws UserNotExistException {
 
         ChattingUserData chattingUserData = chattingUsers.get(userSeq);
@@ -30,10 +37,21 @@ public class ChattingUserService {
         return chattingUserData;
     }
 
+    /**
+     * 유저 리스트
+     *
+     * @return
+     */
     public ConcurrentHashMap<Long, ChattingUserData> getChattingUsers() {
         return chattingUsers;
     }
 
+    /**
+     * 채팅 유저 셋팅
+     *
+     * @param chattingUser
+     * @return
+     */
     public ChattingUserData setChattingUser(ChattingUser chattingUser) {
 
         WeakReference<ChattingUserData> userRef = new WeakReference<>(new ChattingUserData(chattingUser));
@@ -43,9 +61,15 @@ public class ChattingUserService {
         return chattingUserData;
     }
 
+    /**
+     * 채팅방 어드민인지 확인
+     *
+     * @param userIdx
+     * @throws Exception
+     */
     public void checkAdmin(Long userIdx) throws Exception {
         ChattingUserData user = getChattingUser(userIdx);
-        if (user == null || !user.isAdmin()) {
+        if (!user.isAdmin()) {
             log.error("invalid admin user : {}", user);
             throw new UnauthorizedException();
         }

@@ -2,7 +2,7 @@ package kr.heeseong.chatting.user.model;
 
 import kr.heeseong.chatting.room.model.ChattingRoom;
 import kr.heeseong.chatting.room.model.ChattingRoomData;
-import kr.heeseong.chatting.room.model.MessageEvent;
+import kr.heeseong.chatting.message.model.MessageEvent;
 import org.junit.jupiter.api.Test;
 
 import java.lang.ref.WeakReference;
@@ -55,7 +55,7 @@ class ChattingUserDataTest {
 
     @Test
     void stringTest() {
-        Map<String, String > test = new HashMap<>();
+        Map<String, String> test = new HashMap<>();
         System.out.println(test.get("test"));
     }
 
@@ -129,5 +129,15 @@ class ChattingUserDataTest {
         System.out.println("=============");
         System.out.println(messageEvents);
         System.out.println("=============");
+    }
+
+    @Test
+    void timeTest() throws Exception {
+        Long start = System.currentTimeMillis();
+        Thread.sleep(3000);
+        Long end = System.currentTimeMillis();
+        System.out.println(start);
+        System.out.println(end);
+        System.out.println(120000);
     }
 }

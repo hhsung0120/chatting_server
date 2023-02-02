@@ -1,7 +1,7 @@
 package kr.heeseong.chatting.message.controller;
 
 import kr.heeseong.chatting.event.service.EventService;
-import kr.heeseong.chatting.room.model.MessageEvent;
+import kr.heeseong.chatting.message.model.MessageEvent;
 import kr.heeseong.chatting.room.service.ChattingRoomService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

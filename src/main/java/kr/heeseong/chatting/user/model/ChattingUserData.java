@@ -1,8 +1,7 @@
 package kr.heeseong.chatting.user.model;
 
-import kr.heeseong.chatting.room.model.MessageEvent;
+import kr.heeseong.chatting.message.model.MessageEvent;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,6 +62,12 @@ public class ChattingUserData {
         }
     }
 
+    /**
+     * 마지막 메시지를 보낸시간이 2분이 지났다면 true
+     * userTimeout = 120000
+     *
+     * @return
+     */
     public boolean checkTimeOut() {
         if (latestMessageTime != 0) {
             if ((System.currentTimeMillis() - latestMessageTime) > userTimeout) {

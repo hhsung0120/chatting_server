@@ -6,7 +6,7 @@ import kr.heeseong.chatting.exceptions.UserExistException;
 import kr.heeseong.chatting.message.service.MessageService;
 import kr.heeseong.chatting.room.model.ChattingRoom;
 import kr.heeseong.chatting.room.model.ChattingRoomData;
-import kr.heeseong.chatting.room.model.MessageEvent;
+import kr.heeseong.chatting.message.model.MessageEvent;
 import kr.heeseong.chatting.room.service.ChattingRoomService;
 import kr.heeseong.chatting.user.model.ChattingUser;
 import kr.heeseong.chatting.user.model.ChattingUserData;

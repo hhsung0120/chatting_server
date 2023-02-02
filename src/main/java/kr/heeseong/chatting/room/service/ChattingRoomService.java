@@ -3,7 +3,7 @@ package kr.heeseong.chatting.room.service;
 import kr.heeseong.chatting.exceptions.UserNotExistException;
 import kr.heeseong.chatting.room.model.ChattingRoom;
 import kr.heeseong.chatting.room.model.ChattingRoomData;
-import kr.heeseong.chatting.room.model.MessageEvent;
+import kr.heeseong.chatting.message.model.MessageEvent;
 import kr.heeseong.chatting.user.model.ChattingUserData;
 import kr.heeseong.chatting.user.service.ChattingUserService;
 import lombok.RequiredArgsConstructor;

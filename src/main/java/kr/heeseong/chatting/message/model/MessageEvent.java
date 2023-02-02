@@ -1,6 +1,7 @@
-package kr.heeseong.chatting.room.model;
+package kr.heeseong.chatting.message.model;
 
 import kr.heeseong.chatting.eventenum.MessageEventType;
+import kr.heeseong.chatting.room.model.ChattingRoom;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +34,7 @@ public class MessageEvent {
         this.chattingRoomSeq = chattingRoom.getChattingRoomSeq();
     }
 
-    public static MessageEvent setMessageCloneEvent(MessageEvent waitApprovalMessage, MessageEventType eventType){
+    public static MessageEvent setMessageCloneEvent(MessageEvent waitApprovalMessage, MessageEventType eventType) {
         return MessageEvent.waitApprovalMessageEventBuilder()
                 .waitApprovalMessage(waitApprovalMessage)
                 .eventType(eventType)

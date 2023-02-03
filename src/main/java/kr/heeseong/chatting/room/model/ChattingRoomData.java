@@ -45,6 +45,7 @@ public class ChattingRoomData {
         return users;
     }
 
+    @JsonIgnore
     public Set<Long> getUsers() {
         Set<Long> userIdxs = new HashSet<Long>();
 
@@ -55,6 +56,7 @@ public class ChattingRoomData {
         return userIdxs;
     }
 
+    @JsonIgnore
     public Set<Long> getInternalUsers() {
         if (users == null) {
             users = new ConcurrentHashMap<>();
@@ -62,6 +64,7 @@ public class ChattingRoomData {
         return users.keySet();
     }
 
+    @JsonIgnore
     public boolean addUser(ChattingUser user) {
         if (getInternalUsers().contains(user.getUserIdx())) {
             return false;
@@ -71,6 +74,7 @@ public class ChattingRoomData {
         return true;
     }
 
+    @JsonIgnore
     public int removeUser(Long internalIdx) {
         if (getInternalUsers().contains(internalIdx) == false) {
             return -1;
@@ -80,14 +84,17 @@ public class ChattingRoomData {
         return 0;
     }
 
+    @JsonIgnore
     public void addBlockList(Long userIdx) {
         blockList.add(userIdx);
     }
 
+    @JsonIgnore
     public boolean isBlockUser(Long userIdx) {
         return blockList.contains(userIdx);
     }
 
+    @JsonIgnore
     public HashSet<Long> getBlackList() {
         return blockList;
     }
@@ -97,6 +104,7 @@ public class ChattingRoomData {
         return (Long[]) blockList.toArray();
     }
 
+    @JsonIgnore
     public void removeBlockList(Long userIdx) {
         blockList.remove(userIdx);
     }

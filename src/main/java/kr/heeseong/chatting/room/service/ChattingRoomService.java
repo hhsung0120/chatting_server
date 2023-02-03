@@ -58,8 +58,8 @@ public class ChattingRoomService {
     }
 
     //room + userIdx 로변경되어야함
-    public ArrayList<MessageEvent> getNewEvents(Long internalIdx) throws Exception {
-        ChattingUserData user = chattingUserService.getChattingUser(internalIdx);
+    public ArrayList<MessageEvent> getNewEvents(Long userSeq) throws Exception {
+        ChattingUserData user = chattingUserService.getChattingUser(userSeq);
         if (user == null) {
             throw new UserNotExistException();
         }
